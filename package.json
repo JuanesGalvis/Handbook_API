@@ -1,7 +1,7 @@
 {
   "name": "handbook_api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Desarrollo de BackEnd para Handbook",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js"
