@@ -14,7 +14,7 @@ App.use(express.json());
 
 // Ruta inicial o de bienvenida
 App.get('/', (req, res) => {
-    res.send("HOLA MUNDO");
+    res.send("📚 BIENVENIDO A HANDBOOK 📚");
 })
 
 // Routes
@@ -29,6 +29,6 @@ App.use(require('./Routes/Posts.controller'));
 App.use(require('./Routes/SelectedBook.controller'));
 
 // Puerto a escuchar
-App.listen( process.env.PORT || 3000 ,() => {
+App.listen(process.env.PORT || 3000, () => {
     console.log("Servidor corriendo en el puerto: " + process.env.PORT || 3000);
 })

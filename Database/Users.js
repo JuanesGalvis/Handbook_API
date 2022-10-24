@@ -9,9 +9,9 @@ class Users extends MongoDB {
 
     /** R - ALL */
     async getAllClients() {
-    return this.connect().then((db) => {
-        return db.collection('Users').find().toArray();
-    });
+        return this.connect().then((db) => {
+            return db.collection('Users').find().toArray();
+        });
     }
 
 }
