@@ -7,12 +7,27 @@ class Users extends MongoDB {
         super();
     }
 
+    /** R - ONE CLIENT (EXIST) */
+    async getUser(email) {
+        return this.connect().then((db) => {
+            return db.collection('Users').findOne({email: email});
+        });
+    }
+
+    /** C - CREATE */
+    async createUser(data) {
+        return this.connect().then((db) => {
+            return db.collection('Users').insertOne(data);
+        });
+    }
+
     /** R - ALL */
     async getAllClients() {
         return this.connect().then((db) => {
             return db.collection('Users').find().toArray();
         });
     }
+
 
 }
 
