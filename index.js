@@ -1,5 +1,6 @@
 // Crear el servidor
 const express = require('express');
+const passport = require('passport');
 const App = express();
 
 // CORS
@@ -8,6 +9,10 @@ App.use(CORS());
 
 // Variables de entorno
 require('dotenv').config();
+
+// Passport config
+App.use(passport.initialize());
+require('./middleware');
 
 // Utilizar JSON en la API
 App.use(express.json());
