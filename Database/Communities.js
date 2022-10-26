@@ -8,10 +8,10 @@ class Communities extends MongoDB {
     }
 
     /** CREATE */
-    async createCommunity(data) {
+    async createCommunity(data, IdOwner) {
         let newCommunityFormat = {
             ...data,
-            Id_Owner: ObjectId(data.Id_Owner)
+            Id_Owner: ObjectId(IdOwner)
         }
 
         return this.connect().then((db) => {
@@ -38,10 +38,10 @@ class Communities extends MongoDB {
     }
 
     /** UPDATE */
-    async updateCommunity(Id, data) {
+    async updateCommunity(Id, data, IdOwner) {
         let CommunityFormat = {
             ...data,
-            Id_Owner: ObjectId(data.Id_Owner)
+            Id_Owner: ObjectId(IdOwner)
         }
 
         return this.connect().then((db) => {

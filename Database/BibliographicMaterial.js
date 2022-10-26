@@ -8,10 +8,10 @@ class BibliographicMaterial extends MongoDB {
     }
 
     /** CREATE */
-    async createBibliographicMaterial(data) {
+    async createBibliographicMaterial(data, IdOwner) {
         let newBibliographicMaterialFormat = {
             ...data,
-            Id_Owner: ObjectId(data.Id_Owner)
+            Id_Owner: ObjectId(IdOwner)
         }
 
         return this.connect().then((db) => {
@@ -38,10 +38,10 @@ class BibliographicMaterial extends MongoDB {
     }
 
     /** UPDATE */
-    async updateBibliographicMaterial(Id, data) {
+    async updateBibliographicMaterial(Id, data, IdOwner) {
         let BibliographicMaterialFormat = {
             ...data,
-            Id_Owner: ObjectId(data.Id_Owner)
+            Id_Owner: ObjectId(IdOwner)
         }
 
         return this.connect().then((db) => {

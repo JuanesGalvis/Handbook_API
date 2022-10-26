@@ -24,14 +24,14 @@ UsersRouter.get('/auth/google/callback',
     const UserGoogle = request.user;
 
     if (UserGoogle.email.includes("@elpoli.edu.co")) {
-      
+
       let User = {
         _id: null,
         name: UserGoogle.name
       };
 
       const Exist = await UsersClient.getUser(UserGoogle.email);
-      
+
       if (!Exist) {
         let createdUser = await UsersClient.createUser(UserGoogle);
         User._id = createdUser.insertedId;
@@ -39,7 +39,7 @@ UsersRouter.get('/auth/google/callback',
       } else {
         User._id = Exist._id;
       }
-      
+
       let token = FirmarToken(User);
       response.cookie("JWT", token);
       response.json({
@@ -54,7 +54,6 @@ UsersRouter.get('/auth/google/callback',
         message: "ESTE CORREO NO PERTENECE AL POLITÉCNICO JIC"
       })
     }
-
   }
 );
 

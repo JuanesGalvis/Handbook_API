@@ -1,11 +1,19 @@
 const express = require('express');
-const UsersRouter = express.Router();
+const MemberRouter = express.Router();
 
-const Client = require('../Database/Users');
-const UsersClient = new Client();
+const Client = require('../Database/Members');
+const MemberClient = new Client();
 
-UsersRouter.get('', async (req, res) => {
+const passport = require('passport');
 
-})
+/** CREATE MEMBER */
+MemberRouter.post('/new_member',
+    passport.authenticate("JWT", { session: false }),
+    async (req, res) => {
+        let result = await MemberClient.createMember(req.body, req.user.sub);
+        req.result = result;
+        req.message = "MIEMBRO CREADO CON ÉXITO"
+        res.json({ result: req.result, message: req.message });
+    })
 
-module.exports = UsersRouter;
+module.exports = MemberRouter;

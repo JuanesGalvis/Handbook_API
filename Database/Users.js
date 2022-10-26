@@ -10,7 +10,7 @@ class Users extends MongoDB {
     /** R - ONE CLIENT (EXIST) */
     async getUser(email) {
         return this.connect().then((db) => {
-            return db.collection('Users').findOne({email: email});
+            return db.collection('Users').findOne({ email: email });
         });
     }
 
@@ -27,8 +27,6 @@ class Users extends MongoDB {
             return db.collection('Users').find().toArray();
         });
     }
-
-
 }
 
 module.exports = Users;
