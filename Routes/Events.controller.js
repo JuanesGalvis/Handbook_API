@@ -32,9 +32,18 @@ EventsRouter.get('/my_events',
 
     })
 
-EventsRouter.get('/other_events', async (req, res) => {
+EventsRouter.get('/other_events',
+    passport.authenticate("JWT", { session: false }),
+    async (req, res) => {
 
-})
+        const Events = await EventsClient.getEventsParticipate(req.user.sub);
+
+        res.json({
+            result: Events,
+            message: "EVENTOS EN LOS CUALES PARTICIPA"
+        })
+
+    })
 
 EventsRouter.put('/event/:eventID',
     passport.authenticate("JWT", { session: false }),
@@ -61,5 +70,33 @@ EventsRouter.delete('/event/:eventID',
         })
 
     })
+
+EventsRouter.post('/new_participant/:eventID',
+    passport.authenticate("JWT", { session: false }),
+    async (req, res) => {
+
+        let NewParticipant = await EventsClient.addParticipant(req.params.eventID, req.user.sub);
+
+        res.json({
+            result: NewParticipant,
+            message: "PARTICIPANTE AGREGADO AL EVENTO"
+        })
+
+    }
+)
+
+EventsRouter.delete('/remove_participant/:eventID',
+    passport.authenticate("JWT", { session: false }),
+    async (req, res) => {
+
+        let NewParticipant = await EventsClient.removeParticipant(req.params.eventID, req.user.sub);
+
+        res.json({
+            result: NewParticipant,
+            message: "PARTICIPANTE ELIMINADO DEL EVENTO"
+        })
+
+    }
+)
 
 module.exports = EventsRouter;
