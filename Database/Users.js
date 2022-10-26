@@ -7,10 +7,17 @@ class Users extends MongoDB {
         super();
     }
 
-    /** R - ONE CLIENT (EXIST) */
+    /** READ - CLIENT EXIST */
     async getUser(email) {
         return this.connect().then((db) => {
             return db.collection('Users').findOne({ email: email });
+        });
+    }
+
+    /** READ - PROFILE */
+    async getProfile(userID) {
+        return this.connect().then((db) => {
+            return db.collection('Users').findOne({ _id: ObjectId(userID) });
         });
     }
 

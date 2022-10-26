@@ -42,12 +42,12 @@ UsersRouter.get('/auth/google/callback',
 
       let token = FirmarToken(User);
       response.cookie("JWT", token);
+      // response.redirect(`${process.env.REDIRECT_URL}/home`);
       response.json({
         result: UserGoogle,
         message: "ESTUDIANTE LOGEADO CON ÉXITO"
       })
 
-      // response.redirect(`${process.env.REDIRECT_URL}/home`);
 
     } else {
       response.json({
@@ -56,5 +56,18 @@ UsersRouter.get('/auth/google/callback',
     }
   }
 );
+
+UsersRouter.get('/profile',
+  passport.authenticate("JWT", { session: false }),
+  async (req, res) => {
+
+    let User = await UsersClient.getProfile(req.user.sub);
+
+    res.json({
+      result: User,
+      message: "INFORMACIÓN DEL USUARIO"
+  })
+
+  })
 
 module.exports = UsersRouter;
