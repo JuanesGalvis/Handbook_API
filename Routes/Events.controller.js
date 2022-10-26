@@ -82,8 +82,7 @@ EventsRouter.post('/new_participant/:eventID',
             message: "PARTICIPANTE AGREGADO AL EVENTO"
         })
 
-    }
-)
+    })
 
 EventsRouter.delete('/remove_participant/:eventID',
     passport.authenticate("JWT", { session: false }),
@@ -96,7 +95,6 @@ EventsRouter.delete('/remove_participant/:eventID',
             message: "PARTICIPANTE ELIMINADO DEL EVENTO"
         })
 
-    }
-)
+    })
 
 module.exports = EventsRouter;

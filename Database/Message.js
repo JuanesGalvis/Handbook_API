@@ -8,11 +8,11 @@ class Message extends MongoDB {
     }
 
     /** CREATE */
-    createMessage(data, id_user_origin, id_user_destiny) {
+    async createMessage(data, id_user_origin, id_user_destiny) {
 
         let FormatData = {
             ...data,
-            id_user_origin: ObjectId(id_user_origin), 
+            id_user_origin: ObjectId(id_user_origin),
             id_user_destiny: ObjectId(id_user_destiny)
         }
 

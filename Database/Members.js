@@ -78,17 +78,17 @@ class Members extends MongoDB {
         });
     }
 
-    /** UPDATE */
-    async updateMember(data, IdOwner) {
-        let MemberFormat = {
-            Id_Communities: data.Id_Communities.map((item) => {
-                return ObjectId(item)
-            }),
-            Id_Owner: ObjectId(IdOwner)
-        }
-
+    /** POST - ADD COMMUNITY */
+    async addMemberCommunity(IdCommunity, IdOwner) {
         return this.connect().then((db) => {
-            return db.collection('Members').updateOne({ Id_Owner: ObjectId(IdOwner) }, { $set: { ...MemberFormat } });
+            return db.collection('Members').updateOne({ Id_Owner: ObjectId(IdOwner) }, { $push: { Id_Communities: ObjectId(IdCommunity) } });
+        });
+    }
+
+    /** DELETE - REMOVE COMMUNITY */
+    async removeMemberCommunity(IdCommunity, IdOwner) {
+        return this.connect().then((db) => {
+            return db.collection('Members').updateOne({ Id_Owner: ObjectId(IdOwner) }, { $pull: { Id_Communities: ObjectId(IdCommunity) } });
         });
     }
 }

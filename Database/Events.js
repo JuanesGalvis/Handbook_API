@@ -8,7 +8,7 @@ class Events extends MongoDB {
     }
 
     /** CREATE */
-    createEvent(data, IdOwner) {
+    async createEvent(data, IdOwner) {
 
         let FormatData = {
             ...data,
@@ -29,14 +29,14 @@ class Events extends MongoDB {
     }
 
     /** READ - MY EVENTS */
-    getMyEvents(userId) {
+    async getMyEvents(userId) {
         return this.connect().then((db) => {
             return db.collection('Events').find({ id_owner: ObjectId(userId) }).toArray();
         });
     }
 
     /** READ - EVENT PARTICIPATED */
-    getEventsParticipate(userId) {
+    async getEventsParticipate(userId) {
         return this.connect().then((db) => {
             return db.collection('Events').find({ participants: ObjectId(userId) }).toArray();
         });
@@ -47,7 +47,7 @@ class Events extends MongoDB {
 
         try {
             let DataOriginal = await this.getOneEvent(eventID);
-            
+
             let FormatData = {
                 name: editedData.name ? editedData.name : DataOriginal.name,
                 description: editedData.description ? editedData.description : DataOriginal.description,
@@ -55,14 +55,14 @@ class Events extends MongoDB {
                 location: editedData.location ? editedData.location : DataOriginal.location,
                 icon: editedData.icon ? editedData.icon : DataOriginal.icon,
                 id_owner: DataOriginal.id_owner,
-                participants: DataOriginal.participants.length == 0 ? [] : DataOriginal.participants 
+                participants: DataOriginal.participants.length == 0 ? [] : DataOriginal.participants
             }
-    
+
             return this.connect().then((db) => {
-    
+
                 return db.collection('Events').updateOne(
                     { _id: ObjectId(eventID), id_owner: ObjectId(userID) },
-                    { $set: { ...FormatData }}
+                    { $set: { ...FormatData } }
                 );
             });
         } catch (error) {
@@ -71,14 +71,14 @@ class Events extends MongoDB {
     }
 
     /** DELETE */
-    deleteEvent(eventID, userID) {
+    async deleteEvent(eventID, userID) {
         return this.connect().then((db) => {
             return db.collection('Events').deleteOne({ _id: ObjectId(eventID), id_owner: ObjectId(userID) });
         });
     }
 
     /** ADD PARTICIPANT */
-    addParticipant(eventID, userID) {
+    async addParticipant(eventID, userID) {
         return this.connect().then((db) => {
             return db.collection('Events').updateOne(
                 { _id: ObjectId(eventID) },
@@ -87,7 +87,7 @@ class Events extends MongoDB {
         });
     }
 
-    removeParticipant(eventID, userID) {
+    async removeParticipant(eventID, userID) {
         return this.connect().then((db) => {
             return db.collection('Events').updateOne(
                 { _id: ObjectId(eventID) },

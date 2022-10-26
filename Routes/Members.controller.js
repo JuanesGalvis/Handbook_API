@@ -26,13 +26,25 @@ MemberRouter.get('/member/:id',
         res.json({ result: req.result, message: req.message });
     })
 
-/** UPDATE MEMBER */
-MemberRouter.put('/member',
+/** POST MEMBER COMMUNITY */
+MemberRouter.post('/new_member/:idCommunity',
     passport.authenticate("JWT", { session: false }),
     async (req, res) => {
-        let result = await MemberClient.updateMember(req.body, req.user.sub);
+
+        let result = await MemberClient.addMemberCommunity(req.params.idCommunity, req.user.sub);
         req.result = result;
-        req.message = "MIEMBRO ACTUALIZADO CON ÉXITO";
+        req.message = "MIEMBRO AÑADIDO CON ÉXITO";
+        res.json({ result: req.result, message: req.message });
+    })
+
+/** DELETE MEMBER COMMUNITY */
+MemberRouter.delete('/remove_member/:idCommunity',
+    passport.authenticate("JWT", { session: false }),
+    async (req, res) => {
+
+        let result = await MemberClient.removeMemberCommunity(req.params.idCommunity, req.user.sub);
+        req.result = result;
+        req.message = "MIEMBRO ELIMINADO CON ÉXITO";
         res.json({ result: req.result, message: req.message });
     })
 

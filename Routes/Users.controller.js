@@ -69,7 +69,7 @@ UsersRouter.get('/profile',
     res.json({
       result: User,
       message: "INFORMACIÓN DEL USUARIO"
-  })
+    })
 
   })
 
