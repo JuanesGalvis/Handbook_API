@@ -3,7 +3,9 @@ const passport = require('passport');
 const UsersRouter = express.Router();
 
 const Client = require('../Database/Users');
+const Member = require('../Database/Members');
 const UsersClient = new Client();
+const MemberClient = new Member();
 
 const { FirmarToken } = require('../Libs/JWT');
 
@@ -34,8 +36,9 @@ UsersRouter.get('/auth/google/callback',
 
       if (!Exist) {
         let createdUser = await UsersClient.createUser(UserGoogle);
-        User._id = createdUser.insertedId;
+        await MemberClient.createMember(createdUser.insertedId);
 
+        User._id = createdUser.insertedId;
       } else {
         User._id = Exist._id;
       }
