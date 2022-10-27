@@ -52,6 +52,13 @@ class Communities extends MongoDB {
     /** DELETE */
     async deleteCommunity(Id) {
         return this.connect().then((db) => {
+
+            /** ELIMINAR PUBLICACIONES PERTENECIENTES A LA COMUNIDAD */
+            db.collection('Posts').deleteMany({ Id_Community: ObjectId(Id) });
+
+            /** ELIMINARLE LA COMUNIDAD A TODOS LOS MIEMBROS QUE HAGAN PARTE */
+            db.collection('Members').updateMany({ Id_Communities: ObjectId(Id) }, { $pull: { Id_Communities: ObjectId(Id) } });
+
             return db.collection('Communities').deleteOne({ _id: ObjectId(Id) });
         });
     }
