@@ -19,7 +19,20 @@ EventsRouter.post('/new_event',
 
     })
 
-EventsRouter.get('/my_events',
+EventsRouter.get('/events',
+    passport.authenticate("JWT", { session: false }),
+    async (req, res) => {
+
+        const Events = await EventsClient.getAllEvents(req.user.sub);
+
+        res.json({
+            result: Events,
+            message: "EVENTOS CREADOS MENOS LOS DEL USUARIO"
+        })
+
+    })
+
+    EventsRouter.get('/my_events',
     passport.authenticate("JWT", { session: false }),
     async (req, res) => {
 
