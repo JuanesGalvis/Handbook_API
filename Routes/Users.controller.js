@@ -45,12 +45,7 @@ UsersRouter.get('/auth/google/callback',
 
       let token = FirmarToken(User);
       response.cookie("JWT", token);
-      // response.redirect(`${process.env.REDIRECT_URL}/home`);
-      response.json({
-        result: UserGoogle,
-        message: "ESTUDIANTE LOGEADO CON ÉXITO"
-      })
-
+      response.redirect(`${process.env.REDIRECT_FRONTEND}`);
 
     } else {
       response.json({
