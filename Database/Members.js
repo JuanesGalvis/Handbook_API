@@ -55,14 +55,7 @@ class Members extends MongoDB {
             let pipeline = [
                 {
                     '$match': {
-                        '_id': new ObjectId(Id)
-                    }
-                }, {
-                    '$lookup': {
-                        'from': 'Users',
-                        'localField': 'Id_Owner',
-                        'foreignField': '_id',
-                        'as': 'Id_Owner'
+                        'Id_Owner': new ObjectId(Id)
                     }
                 }, {
                     '$lookup': {

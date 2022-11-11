@@ -17,10 +17,10 @@ MemberRouter.get('/members_community/:idCommunity',
     })
 
 /** READ ONE MEMBER */
-MemberRouter.get('/member/:id',
+MemberRouter.get('/member',
     passport.authenticate("JWT", { session: false }),
     async (req, res) => {
-        let result = await MemberClient.getMember(req.params.id);
+        let result = await MemberClient.getMember(req.user.sub);
         req.result = result;
         req.message = "INFO DE UN MIEMBRO";
         res.json({ result: req.result, message: req.message });
