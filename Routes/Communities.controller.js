@@ -17,7 +17,7 @@ CommunityRouter.post('/new_community',
     })
 
 /** READ ALL COMMUNITIES */
-CommunityRouter.get('/communities',
+CommunityRouter.get('/my_communities',
     passport.authenticate("JWT", { session: false }),
     async (req, res) => {
         let result = await CommunityClient.getCommunities(req.user.sub);
@@ -33,6 +33,16 @@ CommunityRouter.get('/community/:id',
         let result = await CommunityClient.getCommunity(req.params.id);
         req.result = result;
         req.message = "INFO DE UNA COMUNIDAD";
+        res.json({ result: req.result, message: req.message });
+    })
+
+/** READ ALL COMMUNITIES WITHOUT ME */
+CommunityRouter.get('/communities',
+    passport.authenticate("JWT", { session: false }),
+    async (req, res) => {
+        let result = await CommunityClient.getAllCommunities(req.user.sub);
+        req.result = result;
+        req.message = "INFO DE TODAS LAS COMUNIDADES MENOS LAS DEL USUARIO";
         res.json({ result: req.result, message: req.message });
     })
 

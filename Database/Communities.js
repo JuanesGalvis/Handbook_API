@@ -37,6 +37,13 @@ class Communities extends MongoDB {
         });
     }
 
+    /** READ - ALL - WITHOUT ME */
+    async getAllCommunities(IdOwner) {
+        return this.connect().then((db) => {
+            return db.collection('Communities').find({ Id_Owner: { $ne: ObjectId(IdOwner) } }).toArray();
+        });
+    }
+
     /** UPDATE */
     async updateCommunity(Id, data, IdOwner) {
         let CommunityFormat = {

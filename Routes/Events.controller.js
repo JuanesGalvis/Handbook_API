@@ -32,7 +32,7 @@ EventsRouter.get('/events',
 
     })
 
-    EventsRouter.get('/my_events',
+EventsRouter.get('/my_events',
     passport.authenticate("JWT", { session: false }),
     async (req, res) => {
 
