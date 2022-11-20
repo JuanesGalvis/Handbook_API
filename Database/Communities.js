@@ -37,10 +37,40 @@ class Communities extends MongoDB {
         });
     }
 
-    /** READ - ALL - WITHOUT ME */
-    async getAllCommunities(IdOwner) {
+    /** READ - ALLCOMMUNITIESMEMBER */
+    async getAllCommunitiesMember(IdOwner) {
         return this.connect().then((db) => {
-            return db.collection('Communities').find({ Id_Owner: { $ne: ObjectId(IdOwner) } }).toArray();
+            try {
+                let pipeline = [
+                    {
+                        '$lookup': {
+                            'from': 'Communities',
+                            'localField': 'Id_Communities',
+                            'foreignField': '_id',
+                            'as': 'Id_Communities'
+                        }
+                    }, {
+                        '$match': {
+                            'Id_Owner': new ObjectId(IdOwner)
+                        }
+                    }, {
+                        '$project': {
+                            'Id_Communities': 1
+                        }
+                    }
+                ]
+
+                return db.collection('Members').aggregate(pipeline).toArray();
+            } catch (err) {
+                return undefined;
+            }
+        });
+    }
+
+    /** READ - ALL - WITHOUT ME - WITHOUT MEMBER */
+    async getAllCommunities(IdOwner, CommunitiesMember) {
+        return this.connect().then((db) => {
+            return db.collection('Communities').find({ Id_Owner: { $ne: ObjectId(IdOwner) }, _id: { $nin: CommunitiesMember } }).toArray();
         });
     }
 

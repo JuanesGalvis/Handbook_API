@@ -36,13 +36,21 @@ CommunityRouter.get('/community/:id',
         res.json({ result: req.result, message: req.message });
     })
 
-/** READ ALL COMMUNITIES WITHOUT ME */
+/** READ ALL COMMUNITIES WITHOUT ME - WITHOUT MEMBER */
 CommunityRouter.get('/communities',
     passport.authenticate("JWT", { session: false }),
     async (req, res) => {
-        let result = await CommunityClient.getAllCommunities(req.user.sub);
+        let CommunitiesMemberArray = await CommunityClient.getAllCommunitiesMember(req.user.sub);
+
+        let CommunitiesMemberArrayId = [];
+
+        for (let i = 0; i < CommunitiesMemberArray[0].Id_Communities.length; i++) {
+            CommunitiesMemberArrayId.push(CommunitiesMemberArray[0].Id_Communities[i]._id);
+        }
+
+        let result = await CommunityClient.getAllCommunities(req.user.sub, CommunitiesMemberArrayId);
         req.result = result;
-        req.message = "INFO DE TODAS LAS COMUNIDADES MENOS LAS DEL USUARIO";
+        req.message = "INFO DE TODAS LAS COMUNIDADES MENOS LAS DEL USUARIO, NI LAS QUE SOY MIEMBRO";
         res.json({ result: req.result, message: req.message });
     })
 
