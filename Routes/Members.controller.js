@@ -21,7 +21,7 @@ MemberRouter.get('/member',
     passport.authenticate("JWT", { session: false }),
     async (req, res) => {
         let result = await MemberClient.getMember(req.user.sub);
-        req.result = result;
+        req.result = result[0].Id_Communities.reverse();
         req.message = "INFO DE UN MIEMBRO";
         res.json({ result: req.result, message: req.message });
     })

@@ -21,7 +21,7 @@ BibliographicMaterialRouter.get('/bibliographic_materials',
     passport.authenticate("JWT", { session: false }),
     async (req, res) => {
         let result = await BibliographicMaterialClient.getBibliographicMaterials(req.user.sub);
-        req.result = result;
+        req.result = result.reverse();
         req.message = "INFO DE TODO EL MATERIAL BIBLIOGRAFICO";
         res.json({ result: req.result, message: req.message });
     })

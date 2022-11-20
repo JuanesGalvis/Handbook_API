@@ -26,7 +26,7 @@ EventsRouter.get('/events',
         const Events = await EventsClient.getAllEvents(req.user.sub);
 
         res.json({
-            result: Events,
+            result: Events.reverse(),
             message: "EVENTOS CREADOS MENOS LOS DEL USUARIO"
         })
 
@@ -52,7 +52,7 @@ EventsRouter.get('/my_events',
         const MyEvents = await EventsClient.getMyEvents(req.user.sub);
 
         res.json({
-            result: MyEvents,
+            result: MyEvents.reverse(),
             message: "EVENTOS CREADOS POR ESTE USUARIO"
         })
 
@@ -65,7 +65,7 @@ EventsRouter.get('/other_events',
         const Events = await EventsClient.getEventsParticipate(req.user.sub);
 
         res.json({
-            result: Events,
+            result: Events.reverse(),
             message: "EVENTOS EN LOS CUALES PARTICIPA"
         })
 

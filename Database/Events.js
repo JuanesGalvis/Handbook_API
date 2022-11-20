@@ -98,7 +98,7 @@ class Events extends MongoDB {
 
     async getAllEvents(userID) {
         return this.connect().then((db) => {
-            return db.collection('Events').find({ id_owner: { $ne: ObjectId(userID) } }).toArray();
+            return db.collection('Events').find({ id_owner: { $ne: ObjectId(userID) }, participants: { $ne: ObjectId(userID) } }).toArray();
         });
     }
 }
