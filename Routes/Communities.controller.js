@@ -2,7 +2,9 @@ const express = require('express');
 const CommunityRouter = express.Router();
 
 const Client = require('../Database/Communities');
+const Client2 = require('../Database/Members');
 const CommunityClient = new Client();
+const MemberClient = new Client2();
 
 const passport = require('passport');
 
@@ -49,7 +51,20 @@ CommunityRouter.get('/communities',
         }
 
         let result = await CommunityClient.getAllCommunities(req.user.sub, CommunitiesMemberArrayId);
-        req.result = result.reverse();
+        result = result.reverse();
+
+        let numberMembersArray;
+
+        for (let i = 0; i < result.length; i++) {
+            numberMembersArray = await MemberClient.getMembersCommunity(result[i]._id.toString());
+
+            result[i] = {
+                ...result[i],
+                members: numberMembersArray.length === 0 ? 0 : numberMembersArray.length
+            }
+        }
+
+        req.result = result;
         req.message = "INFO DE TODAS LAS COMUNIDADES MENOS LAS DEL USUARIO, NI LAS QUE SOY MIEMBRO";
         res.json({ result: req.result, message: req.message });
     })
