@@ -32,6 +32,19 @@ EventsRouter.get('/events',
 
     })
 
+EventsRouter.get('/event/:eventID',
+    passport.authenticate("JWT", { session: false }),
+    async (req, res) => {
+
+        const Event = await EventsClient.getOneEvent(req.params.eventID);
+
+        res.json({
+            result: Event,
+            message: "INFORMACIÓN DE UN EVENTO"
+        })
+
+    })
+
 EventsRouter.get('/my_events',
     passport.authenticate("JWT", { session: false }),
     async (req, res) => {
