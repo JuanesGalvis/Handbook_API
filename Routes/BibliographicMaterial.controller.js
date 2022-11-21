@@ -49,8 +49,8 @@ BibliographicMaterialRouter.get('/bibliographic_materials_random',
             BooksLikeArrayId.push(BooksLikeArray[0].Id_Books[i]._id);
         }
 
-        if ((numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1) !== -1) {
-            let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1), BooksLikeArrayId);
+        if ((numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArrayId.length - 1) !== -1) {
+            let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArrayId.length - 1), BooksLikeArrayId);
 
             let user = await UsersClient.getUserId(result[0].Id_Owner);
 
@@ -102,9 +102,10 @@ BibliographicMaterialRouter.post('/bibliographic_materials_like/:idBook',
         for (let i = 0; i < BooksLikeArray[0].Id_Books.length; i++) {
             BooksLikeArrayId.push(BooksLikeArray[0].Id_Books[i]._id);
         }
+        console.log("num 1", numberBibliographicMaterial.length, "num 2", numberBibliographicMaterialUser.length, "num 3", BooksLikeArrayId.length)
 
-        if ((numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1) !== -1) {
-            let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1), BooksLikeArrayId);
+        if ((numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArrayId.length - 1) !== -1) {
+            let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArrayId.length - 1), BooksLikeArrayId);
 
             let user = await UsersClient.getUserId(result[0].Id_Owner);
 
@@ -138,8 +139,8 @@ BibliographicMaterialRouter.get('/bibliographic_materials_dislike',
             BooksLikeArrayId.push(BooksLikeArray[0].Id_Books[i]._id);
         }
 
-        if ((numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1) !== -1) {
-            let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1), BooksLikeArrayId);
+        if ((numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArrayId.length - 1) !== -1) {
+            let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArrayId.length - 1), BooksLikeArrayId);
 
             let user = await UsersClient.getUserId(result[0].Id_Owner);
 
