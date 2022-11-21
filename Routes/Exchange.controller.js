@@ -113,23 +113,24 @@ ExchangeRouter.delete('/Exchange/:id',
         let Exchange = await ExchangeClient.getExchange(req.params.id);
 
         await BibliographicMaterialClient.updateBibliographicMaterial(
-            Exchange.Id_Book_One,
+            Exchange[0].Id_Book_One[0]._id,
             {
                 state: 'Disponible'
             },
-            Exchange.Id_User_One
+            Exchange[0].Id_User_One[0]._id
         )
         await BibliographicMaterialClient.updateBibliographicMaterial(
-            Exchange.Id_Book_Two,
+            Exchange[0].Id_Book_Two[0]._id,
             {
                 state: 'Disponible'
             },
-            Exchange.Id_User_Two
+            Exchange[0].Id_User_Two[0]._id
         )
-        if (Exchange.Id_User_One.toString() === req.user.sub) {
-            await SelectedBookClient.removeSelectedBookIdOwner(Exchange.Id_Book_Two, req.user.sub);
+
+        if (Exchange[0].Id_User_One[0]._id.toString() === req.user.sub) {
+            await SelectedBookClient.removeSelectedBookIdOwner(Exchange[0].Id_Book_Two[0]._id, req.user.sub);
         } else {
-            await SelectedBookClient.removeSelectedBookIdOwner(Exchange.Id_Book_One, req.user.sub);
+            await SelectedBookClient.removeSelectedBookIdOwner(Exchange[0].Id_Book_One[0]._id, req.user.sub);
         }
 
         let result = await ExchangeClient.deleteExchange(req.params.id);
