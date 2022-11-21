@@ -49,16 +49,22 @@ BibliographicMaterialRouter.get('/bibliographic_materials_random',
             BooksLikeArrayId.push(BooksLikeArray[0].Id_Books[i]._id);
         }
 
-        let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1), BooksLikeArrayId);
+        if ((numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1) !== -1) {
+            let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1), BooksLikeArrayId);
 
-        let user = await UsersClient.getUserId(result[0].Id_Owner);
+            let user = await UsersClient.getUserId(result[0].Id_Owner);
 
-        req.result = {
-            book: result,
-            user: user
-        };
-        req.message = "MI MATERIAL BIBLIOGRAFICO RANDOM";
-        res.json({ result: req.result, message: req.message });
+            req.result = {
+                book: result,
+                user: user
+            };
+            req.message = "MI MATERIAL BIBLIOGRAFICO RANDOM";
+            res.json({ result: req.result, message: req.message });
+        } else {
+            req.result = null
+            req.message = "NO HAY MAS LIBROS NUEVOS";
+            res.json({ result: req.result, message: req.message });
+        }
     })
 
 /** LIKE BOOK AND READ RANDOM BIBLIOGRAPHIC MATERIAL */
@@ -81,6 +87,7 @@ BibliographicMaterialRouter.post('/bibliographic_materials_like/:idBook',
                 console.log("MATCH!!!");
                 await ExchangeClient.createExchange(req.user.sub, bookLiked.Id_Owner, bookOtherUser._id.toString(), req.params.idBook);
                 i = userMatch[0].Id_Books.length;
+                req.match = "SE HA HECHO UN MATCH SATISFACTORIAMENTE";
             }
         }
 
@@ -96,16 +103,22 @@ BibliographicMaterialRouter.post('/bibliographic_materials_like/:idBook',
             BooksLikeArrayId.push(BooksLikeArray[0].Id_Books[i]._id);
         }
 
-        let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1), BooksLikeArrayId);
+        if ((numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1) !== -1) {
+            let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1), BooksLikeArrayId);
 
-        let user = await UsersClient.getUserId(result[0].Id_Owner);
+            let user = await UsersClient.getUserId(result[0].Id_Owner);
 
-        req.result = {
-            book: result,
-            user: user
-        };
-        req.message = "OTRO MATERIAL BIBLIOGRAFICO RANDOM";
-        res.json({ result: req.result, message: req.message });
+            req.result = {
+                book: result,
+                user: user
+            };
+            req.message = "OTRO MATERIAL BIBLIOGRAFICO RANDOM";
+            res.json({ result: req.result, message: req.message, match: req.match });
+        } else {
+            req.result = null
+            req.message = "NO HAY MAS LIBROS NUEVOS";
+            res.json({ result: req.result, message: req.message, match: req.match });
+        }
     })
 
 /** DISLIKE AND READ RANDOM BIBLIOGRAPHIC MATERIAL */
@@ -125,16 +138,22 @@ BibliographicMaterialRouter.get('/bibliographic_materials_dislike',
             BooksLikeArrayId.push(BooksLikeArray[0].Id_Books[i]._id);
         }
 
-        let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1), BooksLikeArrayId);
+        if ((numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1) !== -1) {
+            let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1), BooksLikeArrayId);
 
-        let user = await UsersClient.getUserId(result[0].Id_Owner);
+            let user = await UsersClient.getUserId(result[0].Id_Owner);
 
-        req.result = {
-            book: result,
-            user: user
-        };
-        req.message = "OTRO MATERIAL BIBLIOGRAFICO RANDOM";
-        res.json({ result: req.result, message: req.message });
+            req.result = {
+                book: result,
+                user: user
+            };
+            req.message = "OTRO MATERIAL BIBLIOGRAFICO RANDOM";
+            res.json({ result: req.result, message: req.message });
+        } else {
+            req.result = null
+            req.message = "NO HAY MAS LIBROS NUEVOS";
+            res.json({ result: req.result, message: req.message });
+        }
     })
 
 /** READ ONE BIBLIOGRAPHIC MATERIAL */
