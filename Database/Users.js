@@ -14,6 +14,13 @@ class Users extends MongoDB {
         });
     }
 
+    /** READ - CLIENT */
+    async getUserId(Id) {
+        return this.connect().then((db) => {
+            return db.collection('Users').findOne({ _id: ObjectId(Id) });
+        });
+    }
+
     /** READ - PROFILE */
     async getProfile(userID) {
         return this.connect().then((db) => {

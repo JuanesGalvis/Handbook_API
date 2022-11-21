@@ -4,8 +4,10 @@ const UsersRouter = express.Router();
 
 const Client = require('../Database/Users');
 const Member = require('../Database/Members');
+const SelectedBook = require('../Database/SelectedBook');
 const UsersClient = new Client();
 const MemberClient = new Member();
+const SelectedBookClient = new SelectedBook();
 
 const { FirmarToken } = require('../Libs/JWT');
 
@@ -37,6 +39,7 @@ UsersRouter.get('/auth/google/callback',
       if (!Exist) {
         let createdUser = await UsersClient.createUser(UserGoogle);
         await MemberClient.createMember(createdUser.insertedId);
+        await SelectedBookClient.createSelectedBook(createdUser.insertedId);
 
         User._id = createdUser.insertedId;
       } else {

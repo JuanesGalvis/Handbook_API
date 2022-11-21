@@ -2,7 +2,13 @@ const express = require('express');
 const BibliographicMaterialRouter = express.Router();
 
 const Client = require('../Database/BibliographicMaterial');
+const Client2 = require('../Database/Users');
+const Client3 = require('../Database/SelectedBook');
+const Client4 = require('../Database/Exchange');
 const BibliographicMaterialClient = new Client();
+const UsersClient = new Client2();
+const SelectedBookClient = new Client3();
+const ExchangeClient = new Client4();
 
 const passport = require('passport');
 
@@ -23,6 +29,110 @@ BibliographicMaterialRouter.get('/bibliographic_materials',
         let result = await BibliographicMaterialClient.getBibliographicMaterials(req.user.sub);
         req.result = result.reverse();
         req.message = "INFO DE TODO EL MATERIAL BIBLIOGRAFICO";
+        res.json({ result: req.result, message: req.message });
+    })
+
+/** READ RANDOM BIBLIOGRAPHIC MATERIAL */
+BibliographicMaterialRouter.get('/bibliographic_materials_random',
+    passport.authenticate("JWT", { session: false }),
+    async (req, res) => {
+
+        /** MOSTRAR NUEVO RANDOM */
+        let numberBibliographicMaterialUser = await BibliographicMaterialClient.getBibliographicMaterials(req.user.sub);
+        let numberBibliographicMaterial = await BibliographicMaterialClient.getAllBibliographicMaterials();
+
+        let BooksLikeArray = await SelectedBookClient.getAllBooksLike(req.user.sub);
+
+        let BooksLikeArrayId = [];
+
+        for (let i = 0; i < BooksLikeArray[0].Id_Books.length; i++) {
+            BooksLikeArrayId.push(BooksLikeArray[0].Id_Books[i]._id);
+        }
+
+        let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1), BooksLikeArrayId);
+
+        let user = await UsersClient.getUserId(result[0].Id_Owner);
+
+        req.result = {
+            book: result,
+            user: user
+        };
+        req.message = "MI MATERIAL BIBLIOGRAFICO RANDOM";
+        res.json({ result: req.result, message: req.message });
+    })
+
+/** LIKE BOOK AND READ RANDOM BIBLIOGRAPHIC MATERIAL */
+BibliographicMaterialRouter.post('/bibliographic_materials_like/:idBook',
+    passport.authenticate("JWT", { session: false }),
+    async (req, res) => {
+
+        /** GUARDAR EN LA COLECCIÓN EL LIKE */
+        await SelectedBookClient.addSelectedBook(req.params.idBook, req.user.sub);
+
+        /** VERIFICACIÓN DEL MATCH */
+        let bookLiked = await BibliographicMaterialClient.getBibliographicMaterial(req.params.idBook);
+
+        let userMatch = await SelectedBookClient.getBooksMatch(bookLiked.Id_Owner);
+
+        for (let i = 0; i < userMatch[0].Id_Books.length; i++) {
+            let bookOtherUser = await BibliographicMaterialClient.getBibliographicMaterial(userMatch[0].Id_Books[i]);
+
+            if (bookOtherUser.Id_Owner.toString() === req.user.sub) {
+                console.log("MATCH!!!");
+                await ExchangeClient.createExchange(req.user.sub, bookLiked.Id_Owner, bookOtherUser._id.toString(), req.params.idBook);
+            }
+        }
+
+        /** MOSTRAR NUEVO RANDOM */
+        let numberBibliographicMaterialUser = await BibliographicMaterialClient.getBibliographicMaterials(req.user.sub);
+        let numberBibliographicMaterial = await BibliographicMaterialClient.getAllBibliographicMaterials();
+
+        let BooksLikeArray = await SelectedBookClient.getAllBooksLike(req.user.sub);
+
+        let BooksLikeArrayId = [];
+
+        for (let i = 0; i < BooksLikeArray[0].Id_Books.length; i++) {
+            BooksLikeArrayId.push(BooksLikeArray[0].Id_Books[i]._id);
+        }
+
+        let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1), BooksLikeArrayId);
+
+        let user = await UsersClient.getUserId(result[0].Id_Owner);
+
+        req.result = {
+            book: result,
+            user: user
+        };
+        req.message = "OTRO MATERIAL BIBLIOGRAFICO RANDOM";
+        res.json({ result: req.result, message: req.message });
+    })
+
+/** DISLIKE AND READ RANDOM BIBLIOGRAPHIC MATERIAL */
+BibliographicMaterialRouter.get('/bibliographic_materials_dislike',
+    passport.authenticate("JWT", { session: false }),
+    async (req, res) => {
+
+        /** MOSTRAR NUEVO RANDOM */
+        let numberBibliographicMaterialUser = await BibliographicMaterialClient.getBibliographicMaterials(req.user.sub);
+        let numberBibliographicMaterial = await BibliographicMaterialClient.getAllBibliographicMaterials();
+
+        let BooksLikeArray = await SelectedBookClient.getAllBooksLike(req.user.sub);
+
+        let BooksLikeArrayId = [];
+
+        for (let i = 0; i < BooksLikeArray[0].Id_Books.length; i++) {
+            BooksLikeArrayId.push(BooksLikeArray[0].Id_Books[i]._id);
+        }
+
+        let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArray.length - 1), BooksLikeArrayId);
+
+        let user = await UsersClient.getUserId(result[0].Id_Owner);
+
+        req.result = {
+            book: result,
+            user: user
+        };
+        req.message = "OTRO MATERIAL BIBLIOGRAFICO RANDOM";
         res.json({ result: req.result, message: req.message });
     })
 
@@ -51,6 +161,8 @@ BibliographicMaterialRouter.delete('/bibliographic_material/:id',
     passport.authenticate("JWT", { session: false }),
     async (req, res) => {
         let result = await BibliographicMaterialClient.deleteBibliographicMaterial(req.params.id);
+        await SelectedBookClient.removeSelectedBook(req.params.id);
+
         req.result = result;
         req.message = "MATERIAL BIBLIOGRAFICO ELIMINADO CON ÉXITO";
         res.json({ result: req.result, message: req.message });

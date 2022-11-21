@@ -20,10 +20,34 @@ class BibliographicMaterial extends MongoDB {
     }
 
     /** READ - ALL */
+    async getAllBibliographicMaterials() {
+        return this.connect().then((db) => {
+            try {
+                return db.collection('BibliographicMaterials').find().toArray();
+            } catch (err) {
+                return undefined;
+            }
+        });
+    }
+
+    /** READ - ALL - IDOWNER */
     async getBibliographicMaterials(IdOwner) {
         return this.connect().then((db) => {
             try {
                 return db.collection('BibliographicMaterials').find({ Id_Owner: ObjectId(IdOwner) }).toArray();
+            } catch (err) {
+                return undefined;
+            }
+        });
+    }
+
+    /** READ - RANDOM BOOKS */
+    async getBibliographicMaterialsRandom(IdOwner, limit, BooksLike) {
+        return this.connect().then((db) => {
+            let random = Math.round(Math.random() * limit);
+
+            try {
+                return db.collection('BibliographicMaterials').find({ Id_Owner: { $ne: ObjectId(IdOwner) }, _id: { $nin: BooksLike } }).skip(random).limit(1).toArray();
             } catch (err) {
                 return undefined;
             }
