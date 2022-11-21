@@ -54,6 +54,23 @@ BibliographicMaterialRouter.get('/bibliographic_materials_random',
 
             let user = await UsersClient.getUserId(result[0].Id_Owner);
 
+            let Exchanges = await ExchangeClient.getExchangeOwnerCorrect(user._id);
+
+            let sumReviews = 0;
+
+            for (let i = 0; i < Exchanges.length; i++) {
+                if (Exchanges[i].Id_User_One.toString() === user._id.toString()) {
+                    sumReviews += Exchanges[i].reviewTwo;
+                } else {
+                    sumReviews += Exchanges[i].reviewOne;
+                }
+            }
+
+            user = {
+                ...user,
+                stars: Exchanges.length === 0 ? 0 : Math.floor(sumReviews / Exchanges.length)
+            }
+
             req.result = {
                 book: result,
                 user: user
@@ -121,6 +138,23 @@ BibliographicMaterialRouter.post('/bibliographic_materials_like/:idBook',
 
             let user = await UsersClient.getUserId(result[0].Id_Owner);
 
+            let Exchanges = await ExchangeClient.getExchangeOwnerCorrect(user._id);
+
+            let sumReviews = 0;
+
+            for (let i = 0; i < Exchanges.length; i++) {
+                if (Exchanges[i].Id_User_One.toString() === user._id.toString()) {
+                    sumReviews += Exchanges[i].reviewTwo;
+                } else {
+                    sumReviews += Exchanges[i].reviewOne;
+                }
+            }
+
+            user = {
+                ...user,
+                stars: Exchanges.length === 0 ? 0 : Math.floor(sumReviews / Exchanges.length)
+            }
+
             req.result = {
                 book: result,
                 user: user
@@ -155,6 +189,23 @@ BibliographicMaterialRouter.get('/bibliographic_materials_dislike',
             let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArrayId.length - 1), BooksLikeArrayId);
 
             let user = await UsersClient.getUserId(result[0].Id_Owner);
+
+            let Exchanges = await ExchangeClient.getExchangeOwnerCorrect(user._id);
+
+            let sumReviews = 0;
+
+            for (let i = 0; i < Exchanges.length; i++) {
+                if (Exchanges[i].Id_User_One.toString() === user._id.toString()) {
+                    sumReviews += Exchanges[i].reviewTwo;
+                } else {
+                    sumReviews += Exchanges[i].reviewOne;
+                }
+            }
+
+            user = {
+                ...user,
+                stars: Exchanges.length === 0 ? 0 : Math.floor(sumReviews / Exchanges.length)
+            }
 
             req.result = {
                 book: result,

@@ -16,8 +16,8 @@ class Exchange extends MongoDB {
             Id_Book_Two: ObjectId(Book2),
             state: 'Pendiente',
             date: '',
-            reviewOne: '',
-            reviewTwo: ''
+            reviewOne: 0,
+            reviewTwo: 0
         }
 
         return this.connect().then((db) => {
@@ -29,7 +29,48 @@ class Exchange extends MongoDB {
     async getExchangeOwner(IdOwner) {
         return this.connect().then((db) => {
             try {
-                return db.collection('Exchange').find({ $or: [{ "Id_User_One": ObjectId(IdOwner) }, { "Id_User_Two": ObjectId(IdOwner) }] }).toArray();
+                let pipeline = [
+                    {
+                        '$match': {
+                            '$or': [
+                                {
+                                    'Id_User_One': new ObjectId(IdOwner)
+                                }, {
+                                    'Id_User_Two': new ObjectId(IdOwner)
+                                }
+                            ]
+                        }
+                    }, {
+                        '$lookup': {
+                            'from': 'Users',
+                            'localField': 'Id_User_One',
+                            'foreignField': '_id',
+                            'as': 'Id_User_One'
+                        }
+                    }, {
+                        '$lookup': {
+                            'from': 'Users',
+                            'localField': 'Id_User_Two',
+                            'foreignField': '_id',
+                            'as': 'Id_User_Two'
+                        }
+                    }, {
+                        '$lookup': {
+                            'from': 'BibliographicMaterials',
+                            'localField': 'Id_Book_One',
+                            'foreignField': '_id',
+                            'as': 'Id_Book_One'
+                        }
+                    }, {
+                        '$lookup': {
+                            'from': 'BibliographicMaterials',
+                            'localField': 'Id_Book_Two',
+                            'foreignField': '_id',
+                            'as': 'Id_Book_Two'
+                        }
+                    }
+                ]
+                return db.collection('Exchange').aggregate(pipeline).toArray();
             } catch (err) {
                 return undefined;
             }
@@ -39,14 +80,109 @@ class Exchange extends MongoDB {
     /** READ - ALL - BOOK */
     async getExchangeBook(BookId) {
         return this.connect().then((db) => {
-            return db.collection('Exchange').find({ $or: [{ "Id_Book_One": ObjectId(BookId) }, { "Id_Book_Two": ObjectId(BookId) }] }).toArray();
+            try {
+                let pipeline = [
+                    {
+                        '$match': {
+                            '$or': [
+                                {
+                                    'Id_Book_One': new ObjectId(BookId)
+                                }, {
+                                    'Id_Book_Two': new ObjectId(BookId)
+                                }
+                            ]
+                        }
+                    }, {
+                        '$lookup': {
+                            'from': 'Users',
+                            'localField': 'Id_User_One',
+                            'foreignField': '_id',
+                            'as': 'Id_User_One'
+                        }
+                    }, {
+                        '$lookup': {
+                            'from': 'Users',
+                            'localField': 'Id_User_Two',
+                            'foreignField': '_id',
+                            'as': 'Id_User_Two'
+                        }
+                    }, {
+                        '$lookup': {
+                            'from': 'BibliographicMaterials',
+                            'localField': 'Id_Book_One',
+                            'foreignField': '_id',
+                            'as': 'Id_Book_One'
+                        }
+                    }, {
+                        '$lookup': {
+                            'from': 'BibliographicMaterials',
+                            'localField': 'Id_Book_Two',
+                            'foreignField': '_id',
+                            'as': 'Id_Book_Two'
+                        }
+                    }
+                ]
+                return db.collection('Exchange').aggregate(pipeline).toArray();
+            } catch (err) {
+                return undefined;
+            }
+        });
+    }
+
+    /** READ - ALL - IDOWNER - EXCHANGE */
+    async getExchangeOwnerCorrect(IdOwner) {
+        return this.connect().then((db) => {
+            try {
+                return db.collection('Exchange').find({ $or: [{ "Id_User_One": ObjectId(IdOwner) }, { "Id_User_Two": ObjectId(IdOwner) }], "state": "Intercambio Realizado" }).toArray();
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** READ - ONE */
     async getExchange(Id) {
         return this.connect().then((db) => {
-            return db.collection('Exchange').findOne({ _id: ObjectId(Id) });
+            try {
+                let pipeline = [
+                    {
+                        '$match': {
+                            '_id': new ObjectId(Id)
+                        }
+                    }, {
+                        '$lookup': {
+                            'from': 'Users',
+                            'localField': 'Id_User_One',
+                            'foreignField': '_id',
+                            'as': 'Id_User_One'
+                        }
+                    }, {
+                        '$lookup': {
+                            'from': 'Users',
+                            'localField': 'Id_User_Two',
+                            'foreignField': '_id',
+                            'as': 'Id_User_Two'
+                        }
+                    }, {
+                        '$lookup': {
+                            'from': 'BibliographicMaterials',
+                            'localField': 'Id_Book_One',
+                            'foreignField': '_id',
+                            'as': 'Id_Book_One'
+                        }
+                    }, {
+                        '$lookup': {
+                            'from': 'BibliographicMaterials',
+                            'localField': 'Id_Book_Two',
+                            'foreignField': '_id',
+                            'as': 'Id_Book_Two'
+                        }
+                    }
+                ]
+                return db.collection('Exchange').aggregate(pipeline).toArray();
+            } catch (error) {
+                return undefined;
+            }
         });
     }
 
