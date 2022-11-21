@@ -73,6 +73,13 @@ class SelectedBook extends MongoDB {
             return db.collection('MB_Selections').updateMany({ Id_Books: ObjectId(IdBook) }, { $pull: { Id_Books: ObjectId(IdBook) } });
         });
     }
+
+    /** DELETE - REMOVE BOOK - IDOWNER */
+    async removeSelectedBookIdOwner(IdBook, IdOwner) {
+        return this.connect().then((db) => {
+            return db.collection('MB_Selections').updateOne({ Id_Owner: ObjectId(IdOwner) }, { $pull: { Id_Books: ObjectId(IdBook) } });
+        });
+    }
 }
 
 module.exports = SelectedBook;

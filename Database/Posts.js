@@ -11,6 +11,7 @@ class Posts extends MongoDB {
     async createPost(data, IdOwner) {
         let newPostFormat = {
             ...data,
+            date: new Date(),
             Id_Community: ObjectId(data.Id_Community),
             Id_Owner: ObjectId(IdOwner)
         }

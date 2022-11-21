@@ -193,11 +193,18 @@ BibliographicMaterialRouter.put('/bibliographic_material/:id',
 BibliographicMaterialRouter.delete('/bibliographic_material/:id',
     passport.authenticate("JWT", { session: false }),
     async (req, res) => {
-        let result = await BibliographicMaterialClient.deleteBibliographicMaterial(req.params.id);
-        await SelectedBookClient.removeSelectedBook(req.params.id);
 
-        req.result = result;
-        req.message = "MATERIAL BIBLIOGRAFICO ELIMINADO CON ÉXITO";
+        let BookExchange = await ExchangeClient.getExchangeBook(req.params.id);
+
+        if (BookExchange.length === 0) {
+            let result = await BibliographicMaterialClient.deleteBibliographicMaterial(req.params.id);
+            await SelectedBookClient.removeSelectedBook(req.params.id);
+            req.result = result;
+            req.message = "MATERIAL BIBLIOGRAFICO ELIMINADO CON ÉXITO";
+        } else {
+            req.result = null;
+            req.message = "EL MATERIAL BIBLIOGRAFICO NO PUEDE SER ELIMINADO";
+        }
         res.json({ result: req.result, message: req.message });
     })
 
