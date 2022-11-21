@@ -23,7 +23,20 @@ CommunityRouter.get('/my_communities',
     passport.authenticate("JWT", { session: false }),
     async (req, res) => {
         let result = await CommunityClient.getCommunities(req.user.sub);
-        req.result = result.reverse();
+        result = result.reverse();
+
+        let numberMembersArray;
+
+        for (let i = 0; i < result.length; i++) {
+            numberMembersArray = await MemberClient.getMembersCommunity(result[i]._id.toString());
+
+            result[i] = {
+                ...result[i],
+                members: numberMembersArray.length === 0 ? 0 : numberMembersArray.length
+            }
+        }
+
+        req.result = result;
         req.message = "INFO DE TODAS LAS COMUNIDADES";
         res.json({ result: req.result, message: req.message });
     })

@@ -21,7 +21,21 @@ MemberRouter.get('/member',
     passport.authenticate("JWT", { session: false }),
     async (req, res) => {
         let result = await MemberClient.getMember(req.user.sub);
-        req.result = result[0].Id_Communities.reverse();
+        result = result[0].Id_Communities.reverse();
+
+        let numberMembersArray;
+
+        for (let i = 0; i < result.length; i++) {
+            numberMembersArray = await MemberClient.getMembersCommunity(result[i]._id.toString());
+
+            result[i] = {
+                ...result[i],
+                members: numberMembersArray.length === 0 ? 0 : numberMembersArray.length
+            }
+        }
+
+        req.result = result;
+
         req.message = "INFO DE UN MIEMBRO";
         res.json({ result: req.result, message: req.message });
     })

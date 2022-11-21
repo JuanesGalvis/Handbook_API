@@ -83,9 +83,22 @@ BibliographicMaterialRouter.post('/bibliographic_materials_like/:idBook',
         for (let i = 0; i < userMatch[0].Id_Books.length; i++) {
             let bookOtherUser = await BibliographicMaterialClient.getBibliographicMaterial(userMatch[0].Id_Books[i]);
 
-            if (bookOtherUser.Id_Owner.toString() === req.user.sub) {
-                console.log("MATCH!!!");
+            if (bookOtherUser.Id_Owner.toString() === req.user.sub && bookOtherUser.state === 'Disponible') {
                 await ExchangeClient.createExchange(req.user.sub, bookLiked.Id_Owner, bookOtherUser._id.toString(), req.params.idBook);
+                await BibliographicMaterialClient.updateBibliographicMaterial(
+                    bookOtherUser._id.toString(),
+                    {
+                        state: 'En proceso'
+                    },
+                    req.user.sub
+                )
+                await BibliographicMaterialClient.updateBibliographicMaterial(
+                    req.params.idBook,
+                    {
+                        state: 'En proceso'
+                    },
+                    bookLiked.Id_Owner
+                )
                 i = userMatch[0].Id_Books.length;
                 req.match = "SE HA HECHO UN MATCH SATISFACTORIAMENTE";
             }
@@ -102,7 +115,6 @@ BibliographicMaterialRouter.post('/bibliographic_materials_like/:idBook',
         for (let i = 0; i < BooksLikeArray[0].Id_Books.length; i++) {
             BooksLikeArrayId.push(BooksLikeArray[0].Id_Books[i]._id);
         }
-        console.log("num 1", numberBibliographicMaterial.length, "num 2", numberBibliographicMaterialUser.length, "num 3", BooksLikeArrayId.length)
 
         if ((numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArrayId.length - 1) !== -1) {
             let result = await BibliographicMaterialClient.getBibliographicMaterialsRandom(req.user.sub, (numberBibliographicMaterial.length - numberBibliographicMaterialUser.length - BooksLikeArrayId.length - 1), BooksLikeArrayId);
