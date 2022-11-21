@@ -45,7 +45,7 @@ class BibliographicMaterial extends MongoDB {
     async getBibliographicMaterialsRandom(IdOwner, limit, BooksLike) {
         return this.connect().then((db) => {
             let random = Math.round(Math.random() * limit);
-
+            console.log(random);
             try {
                 return db.collection('BibliographicMaterials').find({ Id_Owner: { $ne: ObjectId(IdOwner) }, _id: { $nin: BooksLike } }).skip(random).limit(1).toArray();
             } catch (err) {
