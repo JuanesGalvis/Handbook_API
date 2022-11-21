@@ -80,6 +80,7 @@ BibliographicMaterialRouter.post('/bibliographic_materials_like/:idBook',
             if (bookOtherUser.Id_Owner.toString() === req.user.sub) {
                 console.log("MATCH!!!");
                 await ExchangeClient.createExchange(req.user.sub, bookLiked.Id_Owner, bookOtherUser._id.toString(), req.params.idBook);
+                i = userMatch[0].Id_Books.length;
             }
         }
 
