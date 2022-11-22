@@ -50,7 +50,7 @@ const io = new Server(httpServer, {
 io.use((socket, next) => {
 
     if (socket.handshake.query && socket.handshake.query.token) {
-        jwt.verify(socket.handshake.query.token, process.env.JWTPASSWORD, function(err, decoded) {
+        jwt.verify(socket.handshake.query.token, process.env.JWTPASSWORD, function (err, decoded) {
             if (err) return next(new Error('Authentication error'));
             socket.decoded = {
                 ...decoded,
@@ -71,7 +71,7 @@ io.use((socket, next) => {
 
     const ClientExchange = require('./Database/Exchange');
     const ExchangeClient = new ClientExchange();
-    
+
     socket.on('getMessage', async () => {
 
         let Messages = await MessageClient.readMessages(socket.decoded.exchange)
@@ -82,9 +82,9 @@ io.use((socket, next) => {
     socket.on('sendMessage', async (message, exchange) => {
 
         const Exchange = await ExchangeClient.getExchange(exchange);
-        
+
         let Destiny = '';
-        
+
         if (Exchange[0].Id_User_One[0]._id.toString() === socket.decoded.sub) {
             Destiny = Exchange[0].Id_User_Two[0]._id.toString()
         } else {
@@ -98,7 +98,7 @@ io.use((socket, next) => {
     })
 
     socket.on("disconnect", () => {
-        console.log("ALGUIEN SE FUE");
+        console.log("CONEXIÓN DESCONECTADA");
     });
 });
 

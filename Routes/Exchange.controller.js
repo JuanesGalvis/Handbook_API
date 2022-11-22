@@ -4,9 +4,11 @@ const ExchangeRouter = express.Router();
 const Exchange = require('../Database/Exchange');
 const BibliographicMaterial = require('../Database/BibliographicMaterial');
 const SelectedBook = require('../Database/SelectedBook');
+const Messages = require('../Database/Message');
 const ExchangeClient = new Exchange();
 const BibliographicMaterialClient = new BibliographicMaterial();
 const SelectedBookClient = new SelectedBook();
+const MessagesClient = new Messages();
 
 const passport = require('passport');
 
@@ -54,22 +56,23 @@ ExchangeRouter.put('/Exchange/:id',
     async (req, res) => {
         let Exchange = await ExchangeClient.getExchange(req.params.id);
 
-        if (Exchange.Id_User_One.toString() === req.user.sub) {
-            if (typeof Exchange.reviewTwo === 'number') {
+        if (Exchange[0].Id_User_One[0]._id.toString() === req.user.sub) {
+            if (typeof Exchange[0].reviewTwo === 'number') {
                 await BibliographicMaterialClient.updateBibliographicMaterial(
-                    Exchange.Id_Book_One,
+                    Exchange[0].Id_Book_One[0]._id,
                     {
                         state: 'Intercambiado'
                     },
-                    Exchange.Id_User_One
+                    Exchange[0].Id_User_One[0]._id
                 );
                 await BibliographicMaterialClient.updateBibliographicMaterial(
-                    Exchange.Id_Book_Two,
+                    Exchange[0].Id_Book_Two[0]._id,
                     {
                         state: 'Intercambiado'
                     },
-                    Exchange.Id_User_Two
+                    Exchange[0].Id_User_Two[0]._id
                 );
+                await MessagesClient.deleteMessages(req.params.id);
                 req.body = {
                     reviewOne: req.body.review,
                     state: "Intercambio Realizado",
@@ -77,21 +80,22 @@ ExchangeRouter.put('/Exchange/:id',
                 }
             }
         } else {
-            if (typeof Exchange.reviewOne === 'number') {
+            if (typeof Exchange[0].reviewOne === 'number') {
                 await BibliographicMaterialClient.updateBibliographicMaterial(
-                    Exchange.Id_Book_One,
+                    Exchange[0].Id_Book_One[0]._id,
                     {
                         state: 'Intercambiado'
                     },
-                    Exchange.Id_User_One
+                    Exchange[0].Id_User_One[0]._id
                 );
                 await BibliographicMaterialClient.updateBibliographicMaterial(
-                    Exchange.Id_Book_Two,
+                    Exchange[0].Id_Book_Two[0]._id,
                     {
                         state: 'Intercambiado'
                     },
-                    Exchange.Id_User_Two
+                    Exchange[0].Id_User_Two[0]._id
                 );
+                await MessagesClient.deleteMessages(req.params.id);
                 req.body = {
                     reviewTwo: req.body.review,
                     state: "Intercambio Realizado",
@@ -134,6 +138,9 @@ ExchangeRouter.delete('/Exchange/:id',
         }
 
         let result = await ExchangeClient.deleteExchange(req.params.id);
+
+        await MessagesClient.deleteMessages(req.params.id);
+
         req.result = result;
         req.message = "INTERCAMBIO ELIMINADO CON ÉXITO";
         res.json({ result: req.result, message: req.message });

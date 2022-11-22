@@ -9,7 +9,7 @@ const MessageClient = new Client();
 const ClientExchange = require('../Database/Exchange');
 const ExchangeClient = new ClientExchange();
 
-MessageRouter.post('/sendMessage/:exchangeId', 
+MessageRouter.post('/sendMessage/:exchangeId',
     passport.authenticate("JWT", { session: false }),
     async (req, res) => {
 
@@ -23,8 +23,6 @@ MessageRouter.post('/sendMessage/:exchangeId',
             Destiny = Exchange[0].Id_User_One[0]._id.toString()
         }
 
-        console.log(Destiny);
-
         const NewMessage = await MessageClient.createMessage(
             req.params.exchangeId,
             req.body.content,
@@ -36,6 +34,6 @@ MessageRouter.post('/sendMessage/:exchangeId',
             result: NewMessage,
             message: "MENSAJE CREADO"
         })
-})
+    })
 
 module.exports = MessageRouter;

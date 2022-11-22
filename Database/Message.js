@@ -7,10 +7,26 @@ class Message extends MongoDB {
         super();
     }
 
+    /** CREATE */
+    async createMessage(exchangeId, data, id_user_origin, id_user_destiny) {
+
+        let FormatData = {
+            content: data,
+            date: new Date(),
+            id_user_origin: ObjectId(id_user_origin),
+            id_user_destiny: ObjectId(id_user_destiny),
+            id_exchange: ObjectId(exchangeId)
+        }
+
+        return this.connect().then((db) => {
+            return db.collection('Messages').insertOne(FormatData);
+        });
+    }
+
     /** READ MESSAGES */
     async readMessages(exchangeId) {
         return this.connect().then((db) => {
-            
+
             try {
                 let pipeline = [
                     {
@@ -40,22 +56,12 @@ class Message extends MongoDB {
         });
     }
 
-    /** CREATE */
-    async createMessage(exchangeId, data, id_user_origin, id_user_destiny) {
-
-        let FormatData = {
-            content: data,
-            date: new Date(),
-            id_user_origin: ObjectId(id_user_origin),
-            id_user_destiny: ObjectId(id_user_destiny),
-            id_exchange: ObjectId(exchangeId)
-        }
-
+    /** DELETE MESSAGES - IDEXCHANGE */
+    async deleteMessages(IdExchange) {
         return this.connect().then((db) => {
-            return db.collection('Messages').insertOne(FormatData);
+            return db.collection('Messages').deleteMany({ id_exchange: ObjectId(IdExchange) });
         });
     }
-
 }
 
 module.exports = Message;
