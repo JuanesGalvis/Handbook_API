@@ -17,34 +17,49 @@ class Events extends MongoDB {
         }
 
         return this.connect().then((db) => {
-            return db.collection('Events').insertOne(FormatData);
+            try {
+                return db.collection('Events').insertOne(FormatData);
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** READ - ONE EVENT */
     async getOneEvent(eventId) {
         return this.connect().then((db) => {
-            return db.collection('Events').findOne({ _id: ObjectId(eventId) });
+            try {
+                return db.collection('Events').findOne({ _id: ObjectId(eventId) });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** READ - MY EVENTS */
     async getMyEvents(userId) {
         return this.connect().then((db) => {
-            return db.collection('Events').find({ id_owner: ObjectId(userId) }).toArray();
+            try {
+                return db.collection('Events').find({ id_owner: ObjectId(userId) }).toArray();
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** READ - EVENT PARTICIPATED */
     async getEventsParticipate(userId) {
         return this.connect().then((db) => {
-            return db.collection('Events').find({ participants: ObjectId(userId) }).toArray();
+            try {
+                return db.collection('Events').find({ participants: ObjectId(userId) }).toArray();
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** UPDATE */
     async updateEvent(eventID, editedData, userID) {
-
         try {
             let DataOriginal = await this.getOneEvent(eventID);
 
@@ -59,11 +74,14 @@ class Events extends MongoDB {
             }
 
             return this.connect().then((db) => {
-
-                return db.collection('Events').updateOne(
-                    { _id: ObjectId(eventID), id_owner: ObjectId(userID) },
-                    { $set: { ...FormatData } }
-                );
+                try {
+                    return db.collection('Events').updateOne(
+                        { _id: ObjectId(eventID), id_owner: ObjectId(userID) },
+                        { $set: { ...FormatData } }
+                    );
+                } catch (err) {
+                    return undefined;
+                }
             });
         } catch (error) {
             return "Evento no encontrado";
@@ -73,32 +91,48 @@ class Events extends MongoDB {
     /** DELETE */
     async deleteEvent(eventID, userID) {
         return this.connect().then((db) => {
-            return db.collection('Events').deleteOne({ _id: ObjectId(eventID), id_owner: ObjectId(userID) });
+            try {
+                return db.collection('Events').deleteOne({ _id: ObjectId(eventID), id_owner: ObjectId(userID) });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** ADD PARTICIPANT */
     async addParticipant(eventID, userID) {
         return this.connect().then((db) => {
-            return db.collection('Events').updateOne(
-                { _id: ObjectId(eventID) },
-                { $push: { participants: ObjectId(userID) } }
-            );
+            try {
+                return db.collection('Events').updateOne(
+                    { _id: ObjectId(eventID) },
+                    { $push: { participants: ObjectId(userID) } }
+                );
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     async removeParticipant(eventID, userID) {
         return this.connect().then((db) => {
-            return db.collection('Events').updateOne(
-                { _id: ObjectId(eventID) },
-                { $pull: { participants: ObjectId(userID) } }
-            );
+            try {
+                return db.collection('Events').updateOne(
+                    { _id: ObjectId(eventID) },
+                    { $pull: { participants: ObjectId(userID) } }
+                );
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     async getAllEvents(userID) {
         return this.connect().then((db) => {
-            return db.collection('Events').find({ id_owner: { $ne: ObjectId(userID) }, participants: { $ne: ObjectId(userID) } }).toArray();
+            try {
+                return db.collection('Events').find({ id_owner: { $ne: ObjectId(userID) }, participants: { $ne: ObjectId(userID) } }).toArray();
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 }

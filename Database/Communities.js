@@ -15,7 +15,11 @@ class Communities extends MongoDB {
         }
 
         return this.connect().then((db) => {
-            return db.collection('Communities').insertOne(newCommunityFormat);
+            try {
+                return db.collection('Communities').insertOne(newCommunityFormat);
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
@@ -33,7 +37,11 @@ class Communities extends MongoDB {
     /** READ - ONE */
     async getCommunity(Id) {
         return this.connect().then((db) => {
-            return db.collection('Communities').findOne({ _id: ObjectId(Id) });
+            try {
+                return db.collection('Communities').findOne({ _id: ObjectId(Id) });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
@@ -70,7 +78,11 @@ class Communities extends MongoDB {
     /** READ - ALL - WITHOUT ME - WITHOUT MEMBER */
     async getAllCommunities(IdOwner, CommunitiesMember) {
         return this.connect().then((db) => {
-            return db.collection('Communities').find({ Id_Owner: { $ne: ObjectId(IdOwner) }, _id: { $nin: CommunitiesMember } }).toArray();
+            try {
+                return db.collection('Communities').find({ Id_Owner: { $ne: ObjectId(IdOwner) }, _id: { $nin: CommunitiesMember } }).toArray();
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
@@ -82,21 +94,28 @@ class Communities extends MongoDB {
         }
 
         return this.connect().then((db) => {
-            return db.collection('Communities').updateOne({ _id: ObjectId(Id) }, { $set: { ...CommunityFormat } });
+            try {
+                return db.collection('Communities').updateOne({ _id: ObjectId(Id) }, { $set: { ...CommunityFormat } });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** DELETE */
     async deleteCommunity(Id) {
         return this.connect().then((db) => {
+            try {
+                /** ELIMINAR PUBLICACIONES PERTENECIENTES A LA COMUNIDAD */
+                db.collection('Posts').deleteMany({ Id_Community: ObjectId(Id) });
 
-            /** ELIMINAR PUBLICACIONES PERTENECIENTES A LA COMUNIDAD */
-            db.collection('Posts').deleteMany({ Id_Community: ObjectId(Id) });
+                /** ELIMINARLE LA COMUNIDAD A TODOS LOS MIEMBROS QUE HAGAN PARTE */
+                db.collection('Members').updateMany({ Id_Communities: ObjectId(Id) }, { $pull: { Id_Communities: ObjectId(Id) } });
 
-            /** ELIMINARLE LA COMUNIDAD A TODOS LOS MIEMBROS QUE HAGAN PARTE */
-            db.collection('Members').updateMany({ Id_Communities: ObjectId(Id) }, { $pull: { Id_Communities: ObjectId(Id) } });
-
-            return db.collection('Communities').deleteOne({ _id: ObjectId(Id) });
+                return db.collection('Communities').deleteOne({ _id: ObjectId(Id) });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 }

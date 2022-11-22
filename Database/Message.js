@@ -19,14 +19,17 @@ class Message extends MongoDB {
         }
 
         return this.connect().then((db) => {
-            return db.collection('Messages').insertOne(FormatData);
+            try {
+                return db.collection('Messages').insertOne(FormatData);
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** READ MESSAGES */
     async readMessages(exchangeId) {
         return this.connect().then((db) => {
-
             try {
                 let pipeline = [
                     {
@@ -59,7 +62,11 @@ class Message extends MongoDB {
     /** DELETE MESSAGES - IDEXCHANGE */
     async deleteMessages(IdExchange) {
         return this.connect().then((db) => {
-            return db.collection('Messages').deleteMany({ id_exchange: ObjectId(IdExchange) });
+            try {
+                return db.collection('Messages').deleteMany({ id_exchange: ObjectId(IdExchange) });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 }
