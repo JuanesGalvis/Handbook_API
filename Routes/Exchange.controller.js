@@ -20,7 +20,7 @@ ExchangeRouter.get('/Exchanges',
         const Exchange = await ExchangeClient.getExchangeOwner(req.user.sub);
 
         req.result = {
-            ...Exchange,
+            Exchanges: [...Exchange],
             myId: req.user.sub
         };
         req.message = "INTERCAMBIOS DE UN USUARIO EN ESPECIFICO";
