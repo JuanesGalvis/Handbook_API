@@ -46,7 +46,10 @@ ExchangeRouter.get('/Exchange/:id',
     passport.authenticate("JWT", { session: false }),
     async (req, res, next) => {
         let result = await ExchangeClient.getExchange(req.params.id);
-        req.result = result;
+        req.result = {
+            Exchange: [...Exchange],
+            myId: req.user.sub
+        };
         req.message = "INFO DE UN INTERCAMBIO";
         next();
     })
