@@ -10,7 +10,15 @@ const HTTP = require('http');
 
 // CORS
 const CORS = require('cors');
-App.use(CORS());
+
+let optionsRoutesCORS = {
+    origin: function (origin, callback) {
+if (origin === "http://localhost:3000" || origin === "http://localhost:3001") {
+        callback(null, true)
+    } else {
+        callback("ERROR DE CORS - NO VIENES DEL ORIGEN PERMITIDO")
+    }}
+};
 
 // Variables de entorno
 require('dotenv').config();
@@ -28,15 +36,16 @@ App.get('/', (req, res) => {
 })
 
 // Routes
-App.use(require('./Routes/Users.controller'));
-App.use(require('./Routes/BibliographicMaterial.controller'));
-App.use(require('./Routes/Communities.controller'));
-App.use(require('./Routes/Events.controller'));
-App.use(require('./Routes/Exchange.controller'));
-App.use(require('./Routes/Members.controller'));
-App.use(require('./Routes/Message.controller'));
-App.use(require('./Routes/Posts.controller'));
-App.use(require('./Routes/SelectedBook.controller'));
+App.use(CORS(), require('./Routes/Users.controller'));
+App.use(CORS(optionsRoutesCORS), require('./Routes/BibliographicMaterial.controller'));
+App.use(CORS(optionsRoutesCORS), require('./Routes/Communities.controller'));
+App.use(CORS(optionsRoutesCORS), require('./Routes/Events.controller'));
+App.use(CORS(optionsRoutesCORS), require('./Routes/Exchange.controller'));
+App.use(CORS(optionsRoutesCORS), require('./Routes/Members.controller'));
+App.use(CORS(optionsRoutesCORS), require('./Routes/Message.controller'));
+App.use(CORS(optionsRoutesCORS), require('./Routes/Posts.controller'));
+App.use(CORS(optionsRoutesCORS), require('./Routes/SelectedBook.controller'));
+App.use(CORS(optionsRoutesCORS), require('./Middleware/Response'));
 
 // Crear servidor http de node basado en el de express
 const httpServer = HTTP.createServer(App);
