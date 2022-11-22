@@ -4,6 +4,7 @@
   "description": "Desarrollo de BackEnd para Handbook",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "dev": "nodemon index.js"
   },
   "keywords": [],
