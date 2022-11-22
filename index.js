@@ -1,7 +1,12 @@
 // Crear el servidor
 const express = require('express');
 const passport = require('passport');
+const jwt = require('jsonwebtoken');
 const App = express();
+
+// Socket.io
+const { Server } = require('socket.io');
+const HTTP = require('http');
 
 // CORS
 const CORS = require('cors');
@@ -33,7 +38,71 @@ App.use(require('./Routes/Message.controller'));
 App.use(require('./Routes/Posts.controller'));
 App.use(require('./Routes/SelectedBook.controller'));
 
+// Crear servidor http de node basado en el de express
+const httpServer = HTTP.createServer(App);
+// Conexión desde el servidor
+const io = new Server(httpServer, {
+    cors: {
+        origin: "http://localhost:3000"
+    }
+});
+
+io.use((socket, next) => {
+
+    if (socket.handshake.query && socket.handshake.query.token) {
+        jwt.verify(socket.handshake.query.token, process.env.JWTPASSWORD, function(err, decoded) {
+            if (err) return next(new Error('Authentication error'));
+            socket.decoded = {
+                ...decoded,
+                exchange: socket.handshake.query.exchange
+            };
+            next();
+        })
+    } else {
+        next(new Error('Authentication error'));
+    }
+}).on('connection', (socket) => {
+
+    console.log("NUEVA CONEXIÓN");
+    socket.join(socket.decoded.exchange);
+
+    const Client = require('./Database/Message');
+    const MessageClient = new Client();
+
+    const ClientExchange = require('./Database/Exchange');
+    const ExchangeClient = new ClientExchange();
+    
+    socket.on('getMessage', async () => {
+
+        let Messages = await MessageClient.readMessages(socket.decoded.exchange)
+        socket.emit('messages', Messages)
+
+    })
+
+    socket.on('sendMessage', async (message, exchange) => {
+
+        const Exchange = await ExchangeClient.getExchange(exchange);
+        
+        let Destiny = '';
+        
+        if (Exchange[0].Id_User_One[0]._id.toString() === socket.decoded.sub) {
+            Destiny = Exchange[0].Id_User_Two[0]._id.toString()
+        } else {
+            Destiny = Exchange[0].Id_User_One[0]._id.toString()
+        }
+
+        let newMessage = await MessageClient.createMessage(exchange, message, socket.decoded.sub, Destiny);
+        let Messages = await MessageClient.readMessages(socket.decoded.exchange);
+
+        io.to(socket.decoded.exchange).emit('messages', Messages)
+    })
+
+    socket.on("disconnect", () => {
+        console.log("ALGUIEN SE FUE");
+    });
+});
+
 // Puerto a escuchar
-App.listen(process.env.PORT || 3000, () => {
+httpServer.listen(process.env.PORT || 3000, () => {
     console.log("Servidor corriendo en el puerto: " + process.env.PORT || 3000);
 })

@@ -70,5 +70,4 @@ UsersRouter.get('/profile',
     })
 
   })
-
 module.exports = UsersRouter;
