@@ -47,7 +47,7 @@ ExchangeRouter.get('/Exchange/:id',
     async (req, res, next) => {
         let result = await ExchangeClient.getExchange(req.params.id);
         req.result = {
-            Exchange: [...Exchange],
+            Exchange: [...result],
             myId: req.user.sub
         };
         req.message = "INFO DE UN INTERCAMBIO";
