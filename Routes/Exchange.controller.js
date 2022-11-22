@@ -82,6 +82,10 @@ ExchangeRouter.put('/Exchange/:id',
                     state: "Intercambio Realizado",
                     date: new Date()
                 }
+            } else {
+                req.body = {
+                    reviewOne: req.body.review
+                }
             }
         } else {
             if (Exchange[0].reviewOne !== 0) {
@@ -104,6 +108,10 @@ ExchangeRouter.put('/Exchange/:id',
                     reviewTwo: req.body.review,
                     state: "Intercambio Realizado",
                     date: new Date()
+                }
+            } else {
+                req.body = {
+                    reviewTwo: req.body.review
                 }
             }
         }
