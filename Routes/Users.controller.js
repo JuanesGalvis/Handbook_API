@@ -60,14 +60,13 @@ UsersRouter.get('/auth/google/callback',
 
 UsersRouter.get('/profile',
   passport.authenticate("JWT", { session: false }),
-  async (req, res) => {
+  async (req, res, next) => {
 
     let User = await UsersClient.getProfile(req.user.sub);
 
-    res.json({
-      result: User,
-      message: "INFORMACIÓN DEL USUARIO"
-    })
+    req.result = User;
+    req.message = "INFORMACIÓN DEL USUARIO";
+    next();
 
   })
 module.exports = UsersRouter;

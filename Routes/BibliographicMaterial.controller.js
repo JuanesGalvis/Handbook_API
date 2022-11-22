@@ -15,27 +15,27 @@ const passport = require('passport');
 /** CREATE BIBLIOGRAPHIC MATERIAL */
 BibliographicMaterialRouter.post('/new_bibliographic_material',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
         let result = await BibliographicMaterialClient.createBibliographicMaterial(req.body, req.user.sub);
         req.result = result;
         req.message = "MATERIAL BIBLIOGRAFICO CREADO CON ÉXITO";
-        res.json({ result: req.result, message: req.message });
+        next();
     })
 
 /** READ ALL BIBLIOGRAPHIC MATERIALS */
 BibliographicMaterialRouter.get('/bibliographic_materials',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
         let result = await BibliographicMaterialClient.getBibliographicMaterials(req.user.sub);
         req.result = result.reverse();
         req.message = "INFO DE TODO EL MATERIAL BIBLIOGRAFICO";
-        res.json({ result: req.result, message: req.message });
+        next();
     })
 
 /** READ RANDOM BIBLIOGRAPHIC MATERIAL */
 BibliographicMaterialRouter.get('/bibliographic_materials_random',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
 
         /** MOSTRAR NUEVO RANDOM */
         let numberBibliographicMaterialUser = await BibliographicMaterialClient.getBibliographicMaterials(req.user.sub);
@@ -76,18 +76,18 @@ BibliographicMaterialRouter.get('/bibliographic_materials_random',
                 user: user
             };
             req.message = "MI MATERIAL BIBLIOGRAFICO RANDOM";
-            res.json({ result: req.result, message: req.message });
+            next();
         } else {
             req.result = null
             req.message = "NO HAY MAS LIBROS NUEVOS";
-            res.json({ result: req.result, message: req.message });
+            next();
         }
     })
 
 /** LIKE BOOK AND READ RANDOM BIBLIOGRAPHIC MATERIAL */
 BibliographicMaterialRouter.post('/bibliographic_materials_like/:idBook',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
 
         /** GUARDAR EN LA COLECCIÓN EL LIKE */
         await SelectedBookClient.addSelectedBook(req.params.idBook, req.user.sub);
@@ -171,7 +171,7 @@ BibliographicMaterialRouter.post('/bibliographic_materials_like/:idBook',
 /** DISLIKE AND READ RANDOM BIBLIOGRAPHIC MATERIAL */
 BibliographicMaterialRouter.get('/bibliographic_materials_dislike',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
 
         /** MOSTRAR NUEVO RANDOM */
         let numberBibliographicMaterialUser = await BibliographicMaterialClient.getBibliographicMaterials(req.user.sub);
@@ -212,38 +212,38 @@ BibliographicMaterialRouter.get('/bibliographic_materials_dislike',
                 user: user
             };
             req.message = "OTRO MATERIAL BIBLIOGRAFICO RANDOM";
-            res.json({ result: req.result, message: req.message });
+            next();
         } else {
             req.result = null
             req.message = "NO HAY MAS LIBROS NUEVOS";
-            res.json({ result: req.result, message: req.message });
+            next();
         }
     })
 
 /** READ ONE BIBLIOGRAPHIC MATERIAL */
 BibliographicMaterialRouter.get('/bibliographic_material/:id',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
         let result = await BibliographicMaterialClient.getBibliographicMaterial(req.params.id);
         req.result = result;
         req.message = "INFO DE UN MATERIAL BIBLIOGRAFICO";
-        res.json({ result: req.result, message: req.message });
+        next();
     })
 
 /** UPDATE BIBLIOGRAPHIC MATERIAL */
 BibliographicMaterialRouter.put('/bibliographic_material/:id',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
         let result = await BibliographicMaterialClient.updateBibliographicMaterial(req.params.id, req.body, req.user.sub);
         req.result = result;
         req.message = "MATERIAL BIBLIOGRAFICO ACTUALIZADO CON ÉXITO";
-        res.json({ result: req.result, message: req.message });
+        next();
     })
 
 /** DELETE BIBLIOGRAPHIC MATERIAL */
 BibliographicMaterialRouter.delete('/bibliographic_material/:id',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
 
         let BookExchange = await ExchangeClient.getExchangeBook(req.params.id);
 
@@ -256,7 +256,7 @@ BibliographicMaterialRouter.delete('/bibliographic_material/:id',
             req.result = null;
             req.message = "EL MATERIAL BIBLIOGRAFICO NO PUEDE SER ELIMINADO";
         }
-        res.json({ result: req.result, message: req.message });
+        next();
     })
 
 module.exports = BibliographicMaterialRouter;

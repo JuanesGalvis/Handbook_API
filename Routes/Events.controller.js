@@ -8,118 +8,108 @@ const passport = require('passport');
 
 EventsRouter.post('/new_event',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
 
         const NewEvent = await EventsClient.createEvent(req.body, req.user.sub);
 
-        res.json({
-            result: NewEvent,
-            message: "EVENTO CREADO"
-        })
-
+        req.result = NewEvent;
+        req.message = "EVENTO CREADO CON ÉXITO";
+        next();
     })
 
 EventsRouter.get('/events',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
 
         const Events = await EventsClient.getAllEvents(req.user.sub);
 
-        res.json({
-            result: Events.reverse(),
-            message: "EVENTOS CREADOS MENOS LOS DEL USUARIO"
-        })
+        req.result = Events.reverse();
+        req.message = "EVENTOS CREADOS MENOS LOS DEL USUARIO";
+        next();
 
     })
 
 EventsRouter.get('/event/:eventID',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
 
         const Event = await EventsClient.getOneEvent(req.params.eventID);
 
-        res.json({
-            result: Event,
-            message: "INFORMACIÓN DE UN EVENTO"
-        })
+        req.result = Event;
+        req.message = "INFORMACIÓN DE UN EVENTO";
+        next();
 
     })
 
 EventsRouter.get('/my_events',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
 
         const MyEvents = await EventsClient.getMyEvents(req.user.sub);
 
-        res.json({
-            result: MyEvents.reverse(),
-            message: "EVENTOS CREADOS POR ESTE USUARIO"
-        })
+        req.result = MyEvents.reverse();
+        req.message = "EVENTOS CREADOS POR ESTE USUARIO";
+        next();
 
     })
 
 EventsRouter.get('/other_events',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
 
         const Events = await EventsClient.getEventsParticipate(req.user.sub);
 
-        res.json({
-            result: Events.reverse(),
-            message: "EVENTOS EN LOS CUALES PARTICIPA"
-        })
+        req.result = Events.reverse();
+        req.message = "EVENTOS EN LOS CUALES PARTICIPA";
+        next();
 
     })
 
 EventsRouter.put('/event/:eventID',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
 
         let changeEvent = await EventsClient.updateEvent(req.params.eventID, req.body, req.user.sub);
 
-        res.json({
-            result: changeEvent,
-            message: "EVENTO ACTUALIZADO"
-        })
+        req.result = changeEvent;
+        req.message = "EVENTO ACTUALIZADO";
+        next();
 
     })
 
 EventsRouter.delete('/event/:eventID',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
 
         let deletedEvent = await EventsClient.deleteEvent(req.params.eventID, req.user.sub);
 
-        res.json({
-            result: deletedEvent,
-            message: "EVENTO ELIMINADO"
-        })
+        req.result = deletedEvent;
+        req.message = "EVENTO ELIMINADO";
+        next();
 
     })
 
 EventsRouter.post('/new_participant/:eventID',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
 
         let NewParticipant = await EventsClient.addParticipant(req.params.eventID, req.user.sub);
 
-        res.json({
-            result: NewParticipant,
-            message: "PARTICIPANTE AGREGADO AL EVENTO"
-        })
+        req.result = NewParticipant;
+        req.message = "PARTICIPANTE AGREGADO AL EVENTO";
+        next();
 
     })
 
 EventsRouter.delete('/remove_participant/:eventID',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
 
         let NewParticipant = await EventsClient.removeParticipant(req.params.eventID, req.user.sub);
 
-        res.json({
-            result: NewParticipant,
-            message: "PARTICIPANTE ELIMINADO DEL EVENTO"
-        })
+        req.result = NewParticipant;
+        req.message = "PARTICIPANTE ELIMINADO DEL EVENTO";
+        next();
 
     })
 

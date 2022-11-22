@@ -15,45 +15,43 @@ const passport = require('passport');
 /** READ EXCHANGE OF IDOWNER */
 ExchangeRouter.get('/Exchanges',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
 
         const Exchange = await ExchangeClient.getExchangeOwner(req.user.sub);
 
-        res.json({
-            result: Exchange,
-            message: "INTERCAMBIOS DE UN USUARIO EN ESPECIFICO"
-        })
+        req.result = Exchange;
+        req.message = "INTERCAMBIOS DE UN USUARIO EN ESPECIFICO";
+        next();
 
     })
 
 /** READ EXCHANGE OF BIBLIOGRAPHIC MATERIAL */
 ExchangeRouter.get('/Exchanges/:BookId',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
 
         const Exchange = await ExchangeClient.getExchangeBook(req.params.BookId);
 
-        res.json({
-            result: Exchange,
-            message: "INTERCAMBIOS DE UN LIBRO EN ESPECIFICO"
-        })
+        req.result = Exchange;
+        req.message = "INTERCAMBIOS DE UN LIBRO EN ESPECIFICO";
+        next();
 
     })
 
 /** READ ONE EXCHANGE */
 ExchangeRouter.get('/Exchange/:id',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
         let result = await ExchangeClient.getExchange(req.params.id);
         req.result = result;
         req.message = "INFO DE UN INTERCAMBIO";
-        res.json({ result: req.result, message: req.message });
+        next();
     })
 
 /** UPDATE EXCHANGE */
 ExchangeRouter.put('/Exchange/:id',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
         let Exchange = await ExchangeClient.getExchange(req.params.id);
 
         if (Exchange[0].Id_User_One[0]._id.toString() === req.user.sub) {
@@ -107,13 +105,13 @@ ExchangeRouter.put('/Exchange/:id',
         let result = await ExchangeClient.updateExchange(req.params.id, req.body);
         req.result = result;
         req.message = "INTERCAMBIO ACTUALIZADO CON ÉXITO";
-        res.json({ result: req.result, message: req.message });
+        next();
     })
 
 /** DELETE EXCHANGE*/
 ExchangeRouter.delete('/Exchange/:id',
     passport.authenticate("JWT", { session: false }),
-    async (req, res) => {
+    async (req, res, next) => {
         let Exchange = await ExchangeClient.getExchange(req.params.id);
 
         await BibliographicMaterialClient.updateBibliographicMaterial(
@@ -143,7 +141,7 @@ ExchangeRouter.delete('/Exchange/:id',
 
         req.result = result;
         req.message = "INTERCAMBIO ELIMINADO CON ÉXITO";
-        res.json({ result: req.result, message: req.message });
+        next();
     })
 
 module.exports = ExchangeRouter;
