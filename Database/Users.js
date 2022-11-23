@@ -10,35 +10,55 @@ class Users extends MongoDB {
     /** READ - CLIENT EXIST */
     async getUser(email) {
         return this.connect().then((db) => {
-            return db.collection('Users').findOne({ email: email });
+            try {
+                return db.collection('Users').findOne({ email: email });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** READ - CLIENT */
     async getUserId(Id) {
         return this.connect().then((db) => {
-            return db.collection('Users').findOne({ _id: ObjectId(Id) });
+            try {
+                return db.collection('Users').findOne({ _id: ObjectId(Id) });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** READ - PROFILE */
     async getProfile(userID) {
         return this.connect().then((db) => {
-            return db.collection('Users').findOne({ _id: ObjectId(userID) });
+            try {
+                return db.collection('Users').findOne({ _id: ObjectId(userID) });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** C - CREATE */
     async createUser(data) {
         return this.connect().then((db) => {
-            return db.collection('Users').insertOne(data);
+            try {
+                return db.collection('Users').insertOne(data);
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** R - ALL */
     async getAllClients() {
         return this.connect().then((db) => {
-            return db.collection('Users').find().toArray();
+            try {
+                return db.collection('Users').find().toArray();
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 }

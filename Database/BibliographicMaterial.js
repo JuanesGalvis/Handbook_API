@@ -15,7 +15,11 @@ class BibliographicMaterial extends MongoDB {
         }
 
         return this.connect().then((db) => {
-            return db.collection('BibliographicMaterials').insertOne(newBibliographicMaterialFormat);
+            try {
+                return db.collection('BibliographicMaterials').insertOne(newBibliographicMaterialFormat);
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
@@ -56,7 +60,11 @@ class BibliographicMaterial extends MongoDB {
     /** READ - ONE */
     async getBibliographicMaterial(Id) {
         return this.connect().then((db) => {
-            return db.collection('BibliographicMaterials').findOne({ _id: ObjectId(Id) });
+            try {
+                return db.collection('BibliographicMaterials').findOne({ _id: ObjectId(Id) });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
@@ -68,14 +76,22 @@ class BibliographicMaterial extends MongoDB {
         }
 
         return this.connect().then((db) => {
-            return db.collection('BibliographicMaterials').updateOne({ _id: ObjectId(Id) }, { $set: { ...BibliographicMaterialFormat } });
+            try {
+                return db.collection('BibliographicMaterials').updateOne({ _id: ObjectId(Id) }, { $set: { ...BibliographicMaterialFormat } });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** DELETE */
     async deleteBibliographicMaterial(Id) {
         return this.connect().then((db) => {
-            return db.collection('BibliographicMaterials').deleteOne({ _id: ObjectId(Id) });
+            try {
+                return db.collection('BibliographicMaterials').deleteOne({ _id: ObjectId(Id) });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 }

@@ -15,7 +15,11 @@ class SelectedBook extends MongoDB {
         }
 
         return this.connect().then((db) => {
-            return db.collection('MB_Selections').insertOne(newSelectedBookFormat);
+            try {
+                return db.collection('MB_Selections').insertOne(newSelectedBookFormat);
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
@@ -63,21 +67,33 @@ class SelectedBook extends MongoDB {
     /** POST - ADD BOOK */
     async addSelectedBook(IdBook, IdOwner) {
         return this.connect().then((db) => {
-            return db.collection('MB_Selections').updateOne({ Id_Owner: ObjectId(IdOwner) }, { $push: { Id_Books: ObjectId(IdBook) } });
+            try {
+                return db.collection('MB_Selections').updateOne({ Id_Owner: ObjectId(IdOwner) }, { $push: { Id_Books: ObjectId(IdBook) } });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** DELETE - REMOVE BOOK */
     async removeSelectedBook(IdBook) {
         return this.connect().then((db) => {
-            return db.collection('MB_Selections').updateMany({ Id_Books: ObjectId(IdBook) }, { $pull: { Id_Books: ObjectId(IdBook) } });
+            try {
+                return db.collection('MB_Selections').updateMany({ Id_Books: ObjectId(IdBook) }, { $pull: { Id_Books: ObjectId(IdBook) } });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** DELETE - REMOVE BOOK - IDOWNER */
     async removeSelectedBookIdOwner(IdBook, IdOwner) {
         return this.connect().then((db) => {
-            return db.collection('MB_Selections').updateOne({ Id_Owner: ObjectId(IdOwner) }, { $pull: { Id_Books: ObjectId(IdBook) } });
+            try {
+                return db.collection('MB_Selections').updateOne({ Id_Owner: ObjectId(IdOwner) }, { $pull: { Id_Books: ObjectId(IdBook) } });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 }

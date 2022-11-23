@@ -17,7 +17,11 @@ class Posts extends MongoDB {
         }
 
         return this.connect().then((db) => {
-            return db.collection('Posts').insertOne(newPostFormat);
+            try {
+                return db.collection('Posts').insertOne(newPostFormat);
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
@@ -46,7 +50,11 @@ class Posts extends MongoDB {
     /** READ - ONE */
     async getPost(Id) {
         return this.connect().then((db) => {
-            return db.collection('Posts').findOne({ _id: ObjectId(Id) });
+            try {
+                return db.collection('Posts').findOne({ _id: ObjectId(Id) });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
@@ -59,14 +67,22 @@ class Posts extends MongoDB {
         }
 
         return this.connect().then((db) => {
-            return db.collection('Posts').updateOne({ _id: ObjectId(Id) }, { $set: { ...PostFormat } });
+            try {
+                return db.collection('Posts').updateOne({ _id: ObjectId(Id) }, { $set: { ...PostFormat } });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** DELETE */
     async deletePost(Id) {
         return this.connect().then((db) => {
-            return db.collection('Posts').deleteOne({ _id: ObjectId(Id) });
+            try {
+                return db.collection('Posts').deleteOne({ _id: ObjectId(Id) });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 }

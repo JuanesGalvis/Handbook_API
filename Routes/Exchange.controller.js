@@ -19,7 +19,10 @@ ExchangeRouter.get('/Exchanges',
 
         const Exchange = await ExchangeClient.getExchangeOwner(req.user.sub);
 
-        req.result = Exchange;
+        req.result = {
+            Exchanges: [...Exchange],
+            myId: req.user.sub
+        };
         req.message = "INTERCAMBIOS DE UN USUARIO EN ESPECIFICO";
         next();
 
@@ -43,7 +46,10 @@ ExchangeRouter.get('/Exchange/:id',
     passport.authenticate("JWT", { session: false }),
     async (req, res, next) => {
         let result = await ExchangeClient.getExchange(req.params.id);
-        req.result = result;
+        req.result = {
+            Exchange: [...result],
+            myId: req.user.sub
+        };
         req.message = "INFO DE UN INTERCAMBIO";
         next();
     })
@@ -55,7 +61,7 @@ ExchangeRouter.put('/Exchange/:id',
         let Exchange = await ExchangeClient.getExchange(req.params.id);
 
         if (Exchange[0].Id_User_One[0]._id.toString() === req.user.sub) {
-            if (typeof Exchange[0].reviewTwo === 'number') {
+            if (Exchange[0].reviewTwo !== 0) {
                 await BibliographicMaterialClient.updateBibliographicMaterial(
                     Exchange[0].Id_Book_One[0]._id,
                     {
@@ -76,9 +82,13 @@ ExchangeRouter.put('/Exchange/:id',
                     state: "Intercambio Realizado",
                     date: new Date()
                 }
+            } else {
+                req.body = {
+                    reviewOne: req.body.review
+                }
             }
         } else {
-            if (typeof Exchange[0].reviewOne === 'number') {
+            if (Exchange[0].reviewOne !== 0) {
                 await BibliographicMaterialClient.updateBibliographicMaterial(
                     Exchange[0].Id_Book_One[0]._id,
                     {
@@ -98,6 +108,10 @@ ExchangeRouter.put('/Exchange/:id',
                     reviewTwo: req.body.review,
                     state: "Intercambio Realizado",
                     date: new Date()
+                }
+            } else {
+                req.body = {
+                    reviewTwo: req.body.review
                 }
             }
         }

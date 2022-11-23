@@ -21,7 +21,11 @@ class Exchange extends MongoDB {
         }
 
         return this.connect().then((db) => {
-            return db.collection('Exchange').insertOne(newExchangeFormat);
+            try {
+                return db.collection('Exchange').insertOne(newExchangeFormat);
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
@@ -193,14 +197,22 @@ class Exchange extends MongoDB {
         }
 
         return this.connect().then((db) => {
-            return db.collection('Exchange').updateOne({ _id: ObjectId(Id) }, { $set: { ...ExchangeFormat } });
+            try {
+                return db.collection('Exchange').updateOne({ _id: ObjectId(Id) }, { $set: { ...ExchangeFormat } });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** DELETE */
     async deleteExchange(Id) {
         return this.connect().then((db) => {
-            return db.collection('Exchange').deleteOne({ _id: ObjectId(Id) });
+            try {
+                return db.collection('Exchange').deleteOne({ _id: ObjectId(Id) });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 

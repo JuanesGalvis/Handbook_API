@@ -15,7 +15,11 @@ class Members extends MongoDB {
         }
 
         return this.connect().then((db) => {
-            return db.collection('Members').insertOne(newMemberFormat);
+            try {
+                return db.collection('Members').insertOne(newMemberFormat);
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
@@ -52,36 +56,48 @@ class Members extends MongoDB {
     /** READ - ONE */
     async getMember(Id) {
         return this.connect().then((db) => {
-            let pipeline = [
-                {
-                    '$match': {
-                        'Id_Owner': new ObjectId(Id)
+            try {
+                let pipeline = [
+                    {
+                        '$match': {
+                            'Id_Owner': new ObjectId(Id)
+                        }
+                    }, {
+                        '$lookup': {
+                            'from': 'Communities',
+                            'localField': 'Id_Communities',
+                            'foreignField': '_id',
+                            'as': 'Id_Communities'
+                        }
                     }
-                }, {
-                    '$lookup': {
-                        'from': 'Communities',
-                        'localField': 'Id_Communities',
-                        'foreignField': '_id',
-                        'as': 'Id_Communities'
-                    }
-                }
-            ]
+                ]
 
-            return db.collection('Members').aggregate(pipeline).toArray();
+                return db.collection('Members').aggregate(pipeline).toArray();
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** POST - ADD COMMUNITY */
     async addMemberCommunity(IdCommunity, IdOwner) {
         return this.connect().then((db) => {
-            return db.collection('Members').updateOne({ Id_Owner: ObjectId(IdOwner) }, { $push: { Id_Communities: ObjectId(IdCommunity) } });
+            try {
+                return db.collection('Members').updateOne({ Id_Owner: ObjectId(IdOwner) }, { $push: { Id_Communities: ObjectId(IdCommunity) } });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 
     /** DELETE - REMOVE COMMUNITY */
     async removeMemberCommunity(IdCommunity, IdOwner) {
         return this.connect().then((db) => {
-            return db.collection('Members').updateOne({ Id_Owner: ObjectId(IdOwner) }, { $pull: { Id_Communities: ObjectId(IdCommunity) } });
+            try {
+                return db.collection('Members').updateOne({ Id_Owner: ObjectId(IdOwner) }, { $pull: { Id_Communities: ObjectId(IdCommunity) } });
+            } catch (err) {
+                return undefined;
+            }
         });
     }
 }
