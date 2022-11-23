@@ -49,11 +49,8 @@ UsersRouter.get('/auth/google/callback',
       let token = FirmarToken(User);
       response.cookie("JWT", token);
       response.redirect(`${process.env.REDIRECT_FRONTEND}`);
-
     } else {
-      response.json({
-        message: "ESTE CORREO NO PERTENECE AL POLITÉCNICO JIC"
-      })
+      response.redirect(`${process.env.REDIRECT_FRONTEND}`);
     }
   }
 );
