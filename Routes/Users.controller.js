@@ -47,10 +47,9 @@ UsersRouter.get('/auth/google/callback',
       }
 
       let token = FirmarToken(User);
-      response.cookie("JWT", token);
-      response.redirect(`${process.env.REDIRECT_FRONTEND}`);
+      response.redirect(`${process.env.REDIRECT_FRONTEND}/${token}`);
     } else {
-      response.redirect(`${process.env.REDIRECT_FRONTEND}`);
+      response.redirect(`${process.env.REDIRECT_FRONTEND}/401`);
     }
   }
 );
